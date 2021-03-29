@@ -19,8 +19,6 @@ composer install stechstudio/filament-impersonate
 
 ## Quickstart
 
-There are three steps to getting up and running with this behavior.
-
 ### 1. Add `Resource` action
 
 First open the resource where you want the impersonate action to appear. This is generally going to be your `UserResoure` class.
@@ -68,6 +66,17 @@ class ListUsers extends ListRecords
 ### 3. Add the banner to your blade layout
 
 The last step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
+
+### 4. Profit!
+
+That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
+
+<img width="1088" alt="CleanShot 2021-03-28 at 20 23 09@2x" src="https://user-images.githubusercontent.com/203749/112773305-84aa7f80-9003-11eb-9014-043f29768cb7.png">
+
+When you click on the impersonate icon you will be logged in as that user, and redirected to your main app. You will see the impersonation banner at the top of the page, with a button to leave and return to Filament:
+
+![banner](https://user-images.githubusercontent.com/203749/112773267-5331b400-9003-11eb-85ae-b54c458fb5aa.png)
+
 
 ## Configuration
 
