@@ -1,0 +1,24 @@
+{
+    "name": "stechstudio/filament-impersonate",
+    "description": "A Filament record action that allows you to impersonate your users.",
+    "type": "library",
+    "require-dev": {
+        "filament/filament": "^1.8"
+    },
+    "license": "MIT",
+    "require": {
+        "lab404/laravel-impersonate": "^1.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "STS\\FilamentImpersonate\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "STS\\FilamentImpersonate\\FilamentImpersonateServiceProvider"
+            ]
+        }
+    }
+}
