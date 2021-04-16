@@ -38,7 +38,7 @@ class UserResource extends Resource {
             ->columns([
                 // ...
             ])
-            ->addRecordActions([
+            ->prependRecordActions([
                 Impersonate::make(), // <--- 
             ]);
     }
