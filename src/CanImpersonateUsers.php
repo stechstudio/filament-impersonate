@@ -16,7 +16,7 @@ trait CanImpersonateUsers
         $this->authorizeImpersonate($target);
 
         app(ImpersonateManager::class)->take(
-            auth()->user(), $target, config('filament-impersonate.default_guard')
+            auth()->user(), $target, config('filament-impersonate.guard')
         );
 
         session()->put('impersonate.back_to', request('fingerprint.path'));
