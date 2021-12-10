@@ -12,16 +12,16 @@ trait CanImpersonateUsers
 {
     public function impersonate($key)
     {
-        $target = $this->getQuery()->find($key);
+        $target = $this->getTableQuery()->find($key);
         $this->authorizeImpersonate($target);
 
         app(ImpersonateManager::class)->take(
-            auth()->user(), $target, isset($this->guard) ? $this->guard : config('filament-impersonate.default_guard')
+            auth()->user(), $target, config('filament-impersonate.guard')
         );
 
         session()->put('impersonate.back_to', request('fingerprint.path'));
 
-        return redirect(isset($this->redirect) ? $this->redirect : config('filament-impersonate.redirect_to'));
+        return redirect(isset($this->url) ? $this->url : config('filament-impersonate.redirect_to'));
     }
 
     protected function authorizeImpersonate($target)

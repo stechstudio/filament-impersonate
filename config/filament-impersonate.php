@@ -1,8 +1,8 @@
 <?php
 return [
     // This is the guard used when logging in as the impersonated user.
-    'default_guard' => env('FILAMENT_IMPERSONATE_GUARD', 'web'),
-
+    'guard' => env('FILAMENT_IMPERSONATE_GUARD', 'web'),
+    
     // After impersonating this is where we'll redirect you to.
     'redirect_to' => env('FILAMENT_IMPERSONATE_REDIRECT', '/'),
 

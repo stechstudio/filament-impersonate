@@ -38,8 +38,8 @@ class UserResource extends Resource {
             ->columns([
                 // ...
             ])
-            ->prependRecordActions([
-                Impersonate::make(), // <--- 
+            ->prependActions([
+                Impersonate::make('impersonate'), // <--- 
             ]);
     }
 ```
