@@ -14,7 +14,7 @@ This package uses [https://github.com/404labfr/laravel-impersonate](https://gith
 You know the drill:
 
 ```bash
-composer install stechstudio/filament-impersonate
+composer require stechstudio/filament-impersonate
 ```
 
 ## Quickstart
