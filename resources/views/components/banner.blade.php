@@ -1,8 +1,9 @@
-@props(['style', 'display'])
+@props(['style', 'display', 'fixed'])
 
 @php
 $style = $style ?? config('filament-impersonate.banner.style');
 $display = $display ?? auth()->user()->name;
+$fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 @endphp
 
 @if(app('impersonate')->isImpersonating())
@@ -12,7 +13,7 @@ $display = $display ?? auth()->user()->name;
     }
 
     #impersonate-banner {
-        position: absolute;
+        position: {{ $fixed ? 'fixed' : 'absolute' }};
         height: 50px;
         top: 0;
         width: 100%;

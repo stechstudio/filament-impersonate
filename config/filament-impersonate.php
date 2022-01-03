@@ -11,9 +11,9 @@ return [
 
     'banner' => [
         // Currently supports 'dark' and 'light'.
-        'style' => env('FILAMENT_IMPERSONATE_STYILE', 'dark'),
+        'style' => env('FILAMENT_IMPERSONATE_BANNER_STYLE', 'dark'),
 
-        // Not yet used. We will inject the banner HTML into every page of your app automatically.
-        // 'auto-inject' => env('FILAMENT_IMPERSONATE_AUTO_BANNER', false)
+        // Turn this off if you want `absolute` positioning, so the banner scrolls out of view
+        'fixed' => env('FILAMENT_IMPERSONATE_BANNER_FIXED', true)
     ]
 ];
