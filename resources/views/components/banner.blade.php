@@ -12,7 +12,7 @@ $display = $display ?? auth()->user()->name;
     }
 
     #impersonate-banner {
-        position: absolute;
+        position: fixed;
         height: 50px;
         top: 0;
         width: 100%;

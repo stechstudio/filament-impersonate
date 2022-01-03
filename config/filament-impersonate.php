@@ -12,8 +12,5 @@ return [
     'banner' => [
         // Currently supports 'dark' and 'light'.
         'style' => env('FILAMENT_IMPERSONATE_STYILE', 'dark'),
-
-        // Not yet used. We will inject the banner HTML into every page of your app automatically.
-        // 'auto-inject' => env('FILAMENT_IMPERSONATE_AUTO_BANNER', false)
     ]
 ];

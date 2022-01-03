@@ -3,7 +3,7 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\PluginServiceProvider;
-use STS\FilamentImpersonate\Middleware\ImpersonationFooter;
+use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
 
 class FilamentImpersonateServiceProvider extends PluginServiceProvider
 {
@@ -11,7 +11,7 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
 
     public function register()
     {
-        $this->app['config']->push('filament.middleware.base', ImpersonationFooter::class);
+        $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
     }
 
     public function boot()
