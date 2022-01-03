@@ -1,3 +1,4 @@
+<x-impersonate::banner :fixed="true"/>
 @if($isFilament)
     <style>
         body > div > aside {
@@ -5,4 +6,3 @@
         }
     </style>
 @endif
-<x-impersonate::banner/>
