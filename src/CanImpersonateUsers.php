@@ -19,7 +19,7 @@ trait CanImpersonateUsers
             auth()->user(), $target, config('filament-impersonate.guard')
         );
 
-        session()->forget('password_hash_web');
+        session()->forget('password_hash_' . config('filament-impersonate.guard'));
         session()->put('impersonate.back_to', request('fingerprint.path'));
 
         return redirect(isset($this->url) ? $this->url : config('filament-impersonate.redirect_to'));
