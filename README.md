@@ -71,7 +71,7 @@ The last step is to display a notice in your app whenever you are impersonating 
 
 That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
 
-<img width="1088" alt="CleanShot 2021-03-28 at 20 23 09@2x" src="https://user-images.githubusercontent.com/203749/112773305-84aa7f80-9003-11eb-9014-043f29768cb7.png">
+<img width="1164" alt="CleanShot 2022-01-03 at 14 10 36@2x" src="https://user-images.githubusercontent.com/203749/147969981-01d18612-bc71-4503-89f6-a8e625ba2a5d.png">
 
 When you click on the impersonate icon you will be logged in as that user, and redirected to your main app. You will see the impersonation banner at the top of the page, with a button to leave and return to Filament:
 
