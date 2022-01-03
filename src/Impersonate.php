@@ -6,19 +6,19 @@ use Filament\Tables\Actions\Action;
 
 class Impersonate extends Action
 {
-    protected $view = 'impersonate::icon';
+    protected string $view = 'impersonate::icon';
 
-    public static function make($name = 'impersonate')
+    public static function make(string $name): static
     {
         return (new static($name))
-            ->when(fn ($record) => static::allowed(auth()->user(), $record));
+            ->hidden(fn ($record) => !static::allowed(auth()->user(), $record));
     }
 
     public static function allowed($current, $target)
     {
         $userCanImpersonate = method_exists($current, 'canImpersonate')
             ? $current->canImpersonate()
-            : $current->isFilamentAdmin();
+            : true;
 
         $targetCanBeImpersonated = method_exists($target, 'canBeImpersonated')
             ? $target->canBeImpersonated()
