@@ -16,6 +16,10 @@ class Impersonate extends Action
 
     public static function allowed($current, $target)
     {
+        if($current->is($target)) {
+            return false;
+        }
+
         $userCanImpersonate = method_exists($current, 'canImpersonate')
             ? $current->canImpersonate()
             : true;
