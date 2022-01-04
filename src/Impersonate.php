@@ -37,6 +37,8 @@ class Impersonate extends Action
         );
 
         session()->forget('password_hash_' . config('filament-impersonate.guard'));
+        session()->forget('password_hash_' . config('filament.auth.guard'));
+
         session()->put('impersonate.back_to', request('fingerprint.path'));
 
         return redirect(config('filament-impersonate.redirect_to'));
