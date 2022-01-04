@@ -46,7 +46,7 @@ class UserResource extends Resource {
 
 ### 2. Add the banner to your blade layout
 
-The last step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
+The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
 
 ### 3. Profit!
 

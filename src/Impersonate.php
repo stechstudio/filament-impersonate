@@ -2,18 +2,15 @@
 
 namespace STS\FilamentImpersonate;
 
-use Filament\Tables\Actions\Action;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\RedirectResponse;
+use Filament\Tables\Actions\IconButtonAction;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
-class Impersonate extends Action
+class Impersonate extends IconButtonAction
 {
-    protected string $view = 'impersonate::icon';
-
-    public static function make(string $name): static
+    protected function setUp(): void
     {
-        return (new static($name))
+        $this
+            ->icon('impersonate::icon')
             ->action(fn($record) => static::impersonate($record))
             ->hidden(fn ($record) => !static::allowed(auth()->user(), $record));
     }
