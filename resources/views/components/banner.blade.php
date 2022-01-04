@@ -1,12 +1,13 @@
 @props(['style', 'display', 'fixed'])
 
+@if(app('impersonate')->isImpersonating())
+
 @php
 $style = $style ?? config('filament-impersonate.banner.style');
 $display = $display ?? auth()->user()->name;
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 @endphp
 
-@if(app('impersonate')->isImpersonating())
 <style>
     html {
         margin-top: 50px;
