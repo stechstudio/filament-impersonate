@@ -1,5 +1,5 @@
 <button
-        wire:click="impersonate('{{ $getRecord()->getKey() }}')"
+        wire:click="mountTableAction('impersonate', '{{ $getRecord()->getKey() }}')"
         type="button"
         class="inline-flex items-center font-medium transition-colors duration-200 text-primary-600 hover:underline hover:text-primary-700"
 >

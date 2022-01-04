@@ -3,6 +3,9 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\Tables\Actions\Action;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\RedirectResponse;
+use Lab404\Impersonate\Services\ImpersonateManager;
 
 class Impersonate extends Action
 {
@@ -11,23 +14,31 @@ class Impersonate extends Action
     public static function make(string $name): static
     {
         return (new static($name))
+            ->action(fn($record) => static::impersonate($record))
             ->hidden(fn ($record) => !static::allowed(auth()->user(), $record));
     }
 
-    public static function allowed($current, $target)
+    protected static function allowed($current, $target)
     {
-        if($current->is($target)) {
+        return $current->isNot($target)
+            && !app(ImpersonateManager::class)->isImpersonating()
+            && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
+            && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
+    }
+
+    protected static function impersonate($record)
+    {
+        if(!static::allowed(auth()->user(), $record)) {
             return false;
         }
 
-        $userCanImpersonate = method_exists($current, 'canImpersonate')
-            ? $current->canImpersonate()
-            : true;
+        app(ImpersonateManager::class)->take(
+            auth()->user(), $record, config('filament-impersonate.guard')
+        );
 
-        $targetCanBeImpersonated = method_exists($target, 'canBeImpersonated')
-            ? $target->canBeImpersonated()
-            : true;
+        session()->forget('password_hash_' . config('filament-impersonate.guard'));
+        session()->put('impersonate.back_to', request('fingerprint.path'));
 
-        return $userCanImpersonate && $targetCanBeImpersonated;
+        return redirect(config('filament-impersonate.redirect_to'));
     }
 }
