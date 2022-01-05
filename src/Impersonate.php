@@ -2,32 +2,63 @@
 
 namespace STS\FilamentImpersonate;
 
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\IconButtonAction;
+use Illuminate\Http\RedirectResponse;
+use Lab404\Impersonate\Services\ImpersonateManager;
+use Livewire\Redirector;
 
-class Impersonate extends Action
+class Impersonate extends IconButtonAction
 {
-    protected string $view = 'impersonate::icon';
-
-    public static function make(string $name): static
+    protected function setUp(): void
     {
-        return (new static($name))
-            ->hidden(fn ($record) => !static::allowed(auth()->user(), $record));
+        $this
+            ->icon('impersonate::icon')
+            ->action(fn($record) => static::impersonate($record))
+            ->hidden(fn($record) => !static::allowed(auth()->user(), $record));
     }
 
-    public static function allowed($current, $target)
+    protected static function allowed($current, $target): bool
     {
-        if($current->is($target)) {
+        return $current->isNot($target)
+            && !app(ImpersonateManager::class)->isImpersonating()
+            && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
+            && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
+    }
+
+    protected static function impersonate($record): bool|Redirector|RedirectResponse
+    {
+        if (!static::allowed(auth()->user(), $record)) {
             return false;
         }
 
-        $userCanImpersonate = method_exists($current, 'canImpersonate')
-            ? $current->canImpersonate()
-            : true;
+        app(ImpersonateManager::class)->take(
+            auth()->user(), $record, config('filament-impersonate.guard')
+        );
 
-        $targetCanBeImpersonated = method_exists($target, 'canBeImpersonated')
-            ? $target->canBeImpersonated()
-            : true;
+        session()->forget(array_unique([
+            'password_hash_' . config('filament-impersonate.guard'),
+            'password_hash_' . config('filament.auth.guard')
+        ]));
+        session()->put('impersonate.back_to', request('fingerprint.path'));
 
-        return $userCanImpersonate && $targetCanBeImpersonated;
+        return redirect(config('filament-impersonate.redirect_to'));
+    }
+
+    public static function leave(): bool|Redirector|RedirectResponse
+    {
+        if(!app(ImpersonateManager::class)->isImpersonating()) {
+            return redirect('/');
+        }
+
+        app(ImpersonateManager::class)->leave();
+
+        session()->forget(array_unique([
+            'password_hash_' . config('filament-impersonate.guard'),
+            'password_hash_' . config('filament.auth.guard')
+        ]));
+
+        return redirect(
+            session()->pull('impersonate.back_to') ?? config('filament.path')
+        );
     }
 }

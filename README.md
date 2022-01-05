@@ -44,30 +44,11 @@ class UserResource extends Resource {
     }
 ```
 
-### 2. Add the trait to your List page
+### 2. Add the banner to your blade layout
 
-Open the ListRecords page for your resource. If you were using the `UserResource` above, then you should be opening the `UserResource/Pages/ListUsers` class.
+The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
 
-Then add the `CanImpersonateUsers` trait, like this:
-
-```php
-namespace App\Filament\Resources\UserResource\Pages;
-
-use Filament\Resources\Pages\ListRecords;
-use STS\FilamentImpersonate\CanImpersonateUsers;
-
-class ListUsers extends ListRecords
-{
-    use CanImpersonateUsers;
-
-    public static $resource = UserResource::class;
-``` 
-
-### 3. Add the banner to your blade layout
-
-The last step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
-
-### 4. Profit!
+### 3. Profit!
 
 That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
 
