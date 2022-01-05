@@ -4,7 +4,7 @@
 
 @php
 $style = $style ?? config('filament-impersonate.banner.style');
-$display = $display ?? auth()->user()->name;
+$display = $display ?? Filament\Facades\Filament::getUserName(auth()->user());
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 @endphp
 
