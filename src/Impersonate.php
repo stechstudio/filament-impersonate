@@ -2,6 +2,7 @@
 
 namespace STS\FilamentImpersonate;
 
+use Filament\Facades\Filament;
 use Filament\Tables\Actions\IconButtonAction;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
@@ -14,7 +15,7 @@ class Impersonate extends IconButtonAction
         $this
             ->icon('impersonate::icon')
             ->action(fn($record) => static::impersonate($record))
-            ->hidden(fn($record) => !static::allowed(auth()->user(), $record));
+            ->hidden(fn($record) => !static::allowed(Filament::auth()->user(), $record));
     }
 
     protected static function allowed($current, $target): bool
@@ -27,12 +28,12 @@ class Impersonate extends IconButtonAction
 
     protected static function impersonate($record): bool|Redirector|RedirectResponse
     {
-        if (!static::allowed(auth()->user(), $record)) {
+        if (!static::allowed(Filament::auth()->user(), $record)) {
             return false;
         }
 
         app(ImpersonateManager::class)->take(
-            auth()->user(), $record, config('filament-impersonate.guard')
+            Filament::auth()->user(), $record, config('filament-impersonate.guard')
         );
 
         session()->forget(array_unique([
