@@ -26,7 +26,7 @@ class Impersonate extends IconButtonAction
             && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
     }
 
-    protected static function impersonate($record): bool|Redirector|RedirectResponse
+    public static function impersonate($record): bool|Redirector|RedirectResponse
     {
         if (!static::allowed(Filament::auth()->user(), $record)) {
             return false;
