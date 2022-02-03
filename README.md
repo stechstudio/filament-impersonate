@@ -69,12 +69,12 @@ By default, only Filament admins can impersonate other users. You can control th
 
 ```php
 class User implements FilamentUser {
-    use IsFilamentUser;
     
     public function canImpersonate()
     {
         return true;
     }
+    
 }
 ```
 
@@ -82,11 +82,13 @@ You can also control which targets can *be* impersonated. Just add a `canBeImper
 
 ```php
 class User {
+
     public function canBeImpersonated()
     {
         // Let's prevent impersonating other users at our own company
         return !Str::endsWith($this->email, '@mycorp.com');
     }
+    
 }
 ``` 
 
