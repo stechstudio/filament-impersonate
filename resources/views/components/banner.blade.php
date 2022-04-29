@@ -25,6 +25,7 @@ $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
         @if($style == 'dark')
         background-color: #1f2937;
         color: #f3f4f6;
+        border-bottom: 1px solid #374151;
         @else
         background-color: #f3f4f6;
         color: #1f2937;
