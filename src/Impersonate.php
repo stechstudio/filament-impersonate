@@ -3,16 +3,19 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\Facades\Filament;
-use Filament\Tables\Actions\IconButtonAction;
+use Filament\Tables\Actions\Action;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Redirector;
 
-class Impersonate extends IconButtonAction
+class Impersonate extends Action
 {
     protected function setUp(): void
     {
+        parent::setUp();
+        
         $this
+            ->iconButton()
             ->icon('impersonate::icon')
             ->action(fn($record) => static::impersonate($record))
             ->hidden(fn($record) => !static::allowed(Filament::auth()->user(), $record));
