@@ -19,6 +19,7 @@ $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
         top: 0;
         width: 100%;
         display: flex;
+        column-gap: 20px;
         justify-content: center;
         align-items: center;
 
@@ -34,7 +35,6 @@ $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 
     #impersonate-banner a {
         display: block;
-        margin-left: 20px;
         padding: 4px 20px;
         background-color: #d1d5db;
         color: #000;
