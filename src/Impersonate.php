@@ -10,6 +10,11 @@ use Livewire\Redirector;
 
 class Impersonate extends Action
 {
+    public static function make(string $name = 'impersonate'): static
+    {
+        return parent::make($name);
+    }
+    
     protected function setUp(): void
     {
         parent::setUp();
