@@ -10,8 +10,12 @@ $position = $position ?? config('filament-impersonate.banner.position');
 @endphp
 
 <style>
-    aside, body {
+    html {
         margin-{{ $position }}: 50px;
+    }
+
+    body.filament-body > div.filament-app-layout > aside.filament-sidebar {
+        padding-{{ $position }}: 50px;
     }
 
     #impersonate-banner {
