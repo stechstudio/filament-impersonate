@@ -10,8 +10,8 @@ $position = $position ?? config('filament-impersonate.banner.position');
 @endphp
 
 <style>
-    html {
-        margin-top: 50px;
+    aside, body {
+        margin-{{ $position }}: 50px;
     }
 
     #impersonate-banner {
@@ -51,7 +51,7 @@ $position = $position ?? config('filament-impersonate.banner.position');
     }
 
     @media print{
-        html {
+        aside, body {
             margin-top: 0;
         }
 
