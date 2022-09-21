@@ -44,6 +44,19 @@ class UserResource extends Resource {
     }
 ```
 
+If you already have an `actions()` method defined in your resource, place the `Impersonate::make` directly into the `actions` array.
+
+```return $table
+    ->columns([
+        // ...
+    ])
+    ->actions([
+        // ...
+        Impersonate::make('impersonate'), // <---
+    ])
+```
+    
+
 ### 2. Add the banner to your blade layout
 
 The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
