@@ -46,7 +46,8 @@ class UserResource extends Resource {
 
 If you already have an `actions()` method defined in your resource, place the `Impersonate::make` directly into the `actions` array.
 
-```return $table
+```
+return $table
     ->columns([
         // ...
     ])
