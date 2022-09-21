@@ -46,7 +46,7 @@ class UserResource extends Resource {
 
 If you already have an `actions()` method defined in your resource, place the `Impersonate::make` directly into the `actions` array.
 
-```
+```php
 return $table
     ->columns([
         // ...
@@ -54,7 +54,7 @@ return $table
     ->actions([
         // ...
         Impersonate::make('impersonate'), // <---
-    ])
+    ]);
 ```
     
 
