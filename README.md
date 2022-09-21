@@ -52,8 +52,8 @@ return $table
         // ...
     ])
     ->actions([
-        // ...
         Impersonate::make('impersonate'), // <---
+        // ...
     ]);
 ```
     
