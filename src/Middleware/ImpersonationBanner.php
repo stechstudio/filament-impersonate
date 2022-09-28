@@ -30,8 +30,6 @@ class ImpersonationBanner
 
     protected function bannerHtml($request)
     {
-        return view('impersonate::auto-inject-banner', [
-            'isFilament' => Str::startsWith($request->path(), config('filament.path')),
-        ])->render();
+        return view('impersonate::auto-inject-banner')->render();
     }
 }

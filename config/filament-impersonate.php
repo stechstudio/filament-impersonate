@@ -14,6 +14,9 @@ return [
         'style' => env('FILAMENT_IMPERSONATE_BANNER_STYLE', 'dark'),
 
         // Turn this off if you want `absolute` positioning, so the banner scrolls out of view
-        'fixed' => env('FILAMENT_IMPERSONATE_BANNER_FIXED', true)
-    ]
+        'fixed' => env('FILAMENT_IMPERSONATE_BANNER_FIXED', true),
+
+        // Currently supports 'top' and 'bottom'.
+        'position' => env('FILAMENT_IMPERSONATE_BANNER_POSITION', 'top'),
+    ],
 ];
