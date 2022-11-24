@@ -56,6 +56,14 @@ return $table
         // ...
     ]);
 ```
+
+You can also define a `guard` and `redirectTo` for the action:
+
+```php
+Impersonate::make('impersonate')
+    ->guard('another-guard')
+    ->redirectTo(route('some.other.route'));
+```
     
 
 ### 2. Add the banner to your blade layout
