@@ -58,7 +58,7 @@ $position = $position ?? config('filament-impersonate.banner.position');
     }
     
     @if($fixed && $position === 'top')
-    .ilament-main-topbar {
+    .filament-main-topbar {
         top: var(--impersonate-banner-height);
     }
     @endif
