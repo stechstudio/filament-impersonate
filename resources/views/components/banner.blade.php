@@ -20,6 +20,7 @@ $position = $position ?? config('filament-impersonate.banner.position');
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
+        z-index: 2147483647;
         height: 50px;
         {{ $position }}: 0;
         width: 100%;
