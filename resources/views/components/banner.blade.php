@@ -10,17 +10,20 @@ $position = $position ?? config('filament-impersonate.banner.position');
 @endphp
 
 <style>
+    :root {
+        --impersonate-banner-height: 50px;
+    }
     html {
-        margin-{{ $position }}: 50px;
+        margin-{{ $position }}: var(--impersonate-banner-height);
     }
 
     body.filament-body > div.filament-app-layout > aside.filament-sidebar {
-        padding-{{ $position }}: 50px;
+        padding-{{ $position }}: var(--impersonate-banner-height);
     }
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
-        height: 50px;
+        height: var(--impersonate-banner-height);
         {{ $position }}: 0;
         width: 100%;
         display: flex;
@@ -53,6 +56,12 @@ $position = $position ?? config('filament-impersonate.banner.position');
         background-color: #9ca3af;
         @endif
     }
+    
+    @if($fixed && $position === 'top')
+    .filament-main-topbar {
+        top: var(--impersonate-banner-height);
+    }
+    @endif
 
     @media print{
         aside, body {
