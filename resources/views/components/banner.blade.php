@@ -1,12 +1,12 @@
-@props(['style', 'display', 'fixed', 'position'])
+@props(['display', 'fixed', 'position', 'background'])
 
 @if(app('impersonate')->isImpersonating())
 
 @php
-$style = $style ?? config('filament-impersonate.banner.style');
 $display = $display ?? Filament\Facades\Filament::getUserName(auth()->user());
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 $position = $position ?? config('filament-impersonate.banner.position');
+$background = $background ?? config('filament-impersonate.banner.background');
 @endphp
 
 <style>
@@ -30,15 +30,14 @@ $position = $position ?? config('filament-impersonate.banner.position');
         column-gap: 20px;
         justify-content: center;
         align-items: center;
-
-        @if($style == 'dark')
         background-color: #1f2937;
         color: #f3f4f6;
         border-bottom: 1px solid #374151;
-        @else
+    }
+
+    .dark #impersonate-banner {
         background-color: #f3f4f6;
         color: #1f2937;
-        @endif
     }
 
     #impersonate-banner a {
@@ -50,13 +49,12 @@ $position = $position ?? config('filament-impersonate.banner.position');
     }
 
     #impersonate-banner a:hover {
-        @if($style == 'dark')
         background-color: #f3f4f6;
-        @else
-        background-color: #9ca3af;
-        @endif
     }
-    
+    .dark #impersonate-banner a:hover {
+        background-color: #9ca3af;
+    }
+
     @if($fixed && $position === 'top')
     .filament-main-topbar {
         top: var(--impersonate-banner-height);
@@ -76,9 +74,9 @@ $position = $position ?? config('filament-impersonate.banner.position');
 
 <div id="impersonate-banner">
     <div>
-        {{ __('Impersonating user') }} <strong>{{ $display }}</strong>
+        {{ __('filament-impersonate::banner.impersonating') }} <strong>{{ $display }}</strong>
     </div>
 
-    <a href="{{ route('filament-impersonate.leave') }}">{{ __('Leave') }}</a>
+    <a href="{{ route('filament-impersonate.leave') }}">{{ __('filament-impersonate::banner.leave') }}</a>
 </div>
 @endIf

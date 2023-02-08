@@ -1,35 +1,18 @@
 <?php
 
-namespace STS\FilamentImpersonate;
+namespace STS\FilamentImpersonate\Contracts;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Tables\Actions\Action;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Redirector;
 
-class Impersonate extends Action
+trait ImpersonateAction
 {
     protected Closure|string|null $guard = null;
 
     protected Closure|string|null $redirectTo = null;
-
-    public static function getDefaultName(): ?string
-    {
-        return 'impersonate';
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this
-            ->iconButton()
-            ->icon('impersonate::icon')
-            ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(fn ($record) => !static::allowed(Filament::auth()->user(), $record));
-    }
 
     public function guard(Closure|string $guard): self
     {
