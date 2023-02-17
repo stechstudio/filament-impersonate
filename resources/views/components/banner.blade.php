@@ -3,17 +3,32 @@
 @if(app('impersonate')->isImpersonating())
 
 @php
-$style = $style ?? config('filament-impersonate.banner.style');
 $display = $display ?? Filament\Facades\Filament::getUserName(auth()->user());
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 $position = $position ?? config('filament-impersonate.banner.position');
+$borderPosition = $position === 'top' ? 'bottom' : 'top';
+
+$style = $style ?? config('filament-impersonate.banner.style');
+$styles = config('filament-impersonate.banner.styles');
+$default = $style === 'auto' ? 'light' : $style;
+$flipped = $default === 'dark' ? 'light' : 'dark';
 @endphp
 
 <style>
     :root {
         --impersonate-banner-height: 50px;
-        --impersonate-dark-color: #1f2937;
-        --impersonate-light-color: #f3f4f6;
+
+        --impersonate-light-bg-color: {{ $styles['light']['background'] }};
+        --impersonate-light-text-color: {{ $styles['light']['text'] }};
+        --impersonate-light-border-color: {{ $styles['light']['border'] }};
+        --impersonate-light-button-bg-color: {{ implode(',', sscanf($styles['dark']['background'], "#%02x%02x%02x")) }};
+        --impersonate-light-button-text-color: {{ $styles['dark']['text'] }};
+
+        --impersonate-dark-bg-color: {{ $styles['dark']['background'] }};
+        --impersonate-dark-text-color: {{ $styles['dark']['text'] }};
+        --impersonate-dark-border-color: {{ $styles['dark']['border'] }};
+        --impersonate-dark-button-bg-color: {{ implode(',', sscanf($styles['light']['background'], "#%02x%02x%02x")) }};
+        --impersonate-dark-button-text-color: {{ $styles['light']['text'] }};
     }
     html {
         margin-{{ $position }}: var(--impersonate-banner-height);
@@ -32,22 +47,16 @@ $position = $position ?? config('filament-impersonate.banner.position');
         column-gap: 20px;
         justify-content: center;
         align-items: center;
-
-        @if($style === 'dark')
-        background-color: var(--impersonate-dark-color);
-        color: var(--impersonate-light-color);
-        border-bottom: 1px solid #374151;
-        @else
-        background-color: var(--impersonate-light-color);
-        color: var(--impersonate-dark-color);
-        @endif
+        background-color: var(--impersonate-{{ $default }}-bg-color);
+        color: var(--impersonate-{{ $default }}-text-color);
+        border-{{ $borderPosition }}: 1px solid var(--impersonate-{{ $default }}-border-color);
     }
 
     @if($style === 'auto')
     .dark #impersonate-banner {
-        background-color: var(--impersonate-light-color);
-        color: var(--impersonate-dark-color);
-        border-bottom: 1px solid #374151;
+        background-color: var(--impersonate-dark-bg-color);
+        color: var(--impersonate-dark-text-color);
+        border-{{ $borderPosition }}: 1px solid var(--impersonate-dark-border-color);
     }
     @endif
 
@@ -55,33 +64,24 @@ $position = $position ?? config('filament-impersonate.banner.position');
         display: block;
         padding: 4px 20px;
         border-radius: 5px;
-        @if($style === 'dark')
-        background-color: var(--impersonate-light-color);
-        color: var(--impersonate-dark-color);
-        @else
-        background-color: var(--impersonate-dark-color);
-        color: var(--impersonate-light-color);
-        @endif
+        background-color: rgba(var(--impersonate-{{ $default }}-button-bg-color), 0.7);
+        color: var(--impersonate-{{ $default }}-button-text-color);
     }
 
     @if($style === 'auto')
     .dark #impersonate-banner a {
-        background-color: var(--impersonate-dark-color);
-        color: var(--impersonate-light-color);
+        background-color: rgba(var(--impersonate-dark-button-bg-color), 0.7;
+        color: var(--impersonate-dark-button-text-color);
     }
     @endif
 
     #impersonate-banner a:hover {
-        @if($style === 'dark')
-        background-color: var(--impersonate-light-color);
-        @else
-        background-color: var(--impersonate-dark-color);
-        @endif
+        background-color: var(--impersonate-{{ $default }}-button-bg-color);
     }
 
     @if($style === 'auto')
     .dark #impersonate-banner a:hover {
-        background-color: var(--impersonate-dark-color);
+        background-color: var(--impersonate-dark-bg-color);
     }
     @endif
     
