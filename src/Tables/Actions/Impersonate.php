@@ -4,11 +4,11 @@ namespace STS\FilamentImpersonate\Tables\Actions;
 
 use Filament\Facades\Filament;
 use Filament\Tables\Actions\Action;
-use STS\FilamentImpersonate\Contracts\ImpersonateAction;
+use STS\FilamentImpersonate\Concerns\Impersonates;
 
 class Impersonate extends Action
 {
-    use ImpersonateAction;
+    use Impersonates;
 
     protected function setUp(): void
     {

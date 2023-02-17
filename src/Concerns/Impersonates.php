@@ -1,6 +1,6 @@
 <?php
 
-namespace STS\FilamentImpersonate\Contracts;
+namespace STS\FilamentImpersonate\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Redirector;
 
-trait ImpersonateAction
+trait Impersonates
 {
     protected Closure|string|null $guard = null;
 
