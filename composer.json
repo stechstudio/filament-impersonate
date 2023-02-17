@@ -3,7 +3,7 @@
     "description": "A Filament record action that allows you to impersonate your users.",
     "type": "library",
     "require-dev": {
-        "filament/filament": "^2.5"
+        "filament/filament": "^3.0"
     },
     "license": "MIT",
     "require": {
