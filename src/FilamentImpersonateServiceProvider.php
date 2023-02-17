@@ -2,16 +2,19 @@
 
 namespace STS\FilamentImpersonate;
 
-use Filament\PluginServiceProvider;
-use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
+use BladeUI\Icons\Factory;
+use Illuminate\Support\ServiceProvider;
 
-class FilamentImpersonateServiceProvider extends PluginServiceProvider
+class FilamentImpersonateServiceProvider extends ServiceProvider
 {
-    public static string $name = 'filament-impersonate';
-
     public function register()
     {
-        $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
+        $this->callAfterResolving(Factory::class, function (Factory $factory) {
+            $factory->add('impersonate', [
+                'path' => __DIR__.'/../resources/views/icons',
+                'prefix' => 'impersonate',
+            ]);
+        });
     }
 
     public function boot()
