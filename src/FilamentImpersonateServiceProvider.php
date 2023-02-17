@@ -21,5 +21,7 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'filament-impersonate');
     }
 }

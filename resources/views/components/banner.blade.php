@@ -76,9 +76,9 @@ $position = $position ?? config('filament-impersonate.banner.position');
 
 <div id="impersonate-banner">
     <div>
-        {{ __('Impersonating user') }} <strong>{{ $display }}</strong>
+        {{ __('filament-impersonate::banner.impersonating') }} <strong>{{ $display }}</strong>
     </div>
 
-    <a href="{{ route('filament-impersonate.leave') }}">{{ __('Leave') }}</a>
+    <a href="{{ route('filament-impersonate.leave') }}">{{ __('filament-impersonate::banner.leave') }}</a>
 </div>
 @endIf
