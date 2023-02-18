@@ -43,14 +43,6 @@ trait Impersonates
         return $this->evaluate($this->redirectTo) ?? config('filament-impersonate.redirect_to');
     }
 
-    protected function allowed($current, $target): bool
-    {
-        return $current->isNot($target)
-            && !app(ImpersonateManager::class)->isImpersonating()
-            && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
-            && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
-    }
-
     public function impersonate($record): bool|Redirector|RedirectResponse
     {
         if (!$this->allowed(Filament::auth()->user(), $record)) {
