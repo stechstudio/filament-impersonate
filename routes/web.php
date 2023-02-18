@@ -1,7 +1,15 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use STS\FilamentImpersonate\Impersonate;
+use Lab404\Impersonate\Services\ImpersonateManager;
 
-Route::get('filament-impersonate/leave', fn() => Impersonate::leave())
-    ->name('filament-impersonate.leave')
-    ->middleware(config('filament-impersonate.leave_middleware'));
+Route::get('filament-impersonate/leave', function() {
+    if(!app(ImpersonateManager::class)->isImpersonating()) {
+        return redirect('/');
+    }
+
+    app(ImpersonateManager::class)->leave();
+
+    return redirect(
+        session()->pull('impersonate.back_to') ?? config('filament.path')
+    );
+})->name('filament-impersonate.leave')->middleware(config('filament-impersonate.leave_middleware'));

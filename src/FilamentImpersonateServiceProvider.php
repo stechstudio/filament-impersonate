@@ -3,6 +3,9 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Lab404\Impersonate\Events\LeaveImpersonation;
+use Lab404\Impersonate\Events\TakeImpersonation;
 use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
@@ -13,6 +16,9 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
     public function register()
     {
         $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
+
+        Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
+        Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
     }
 
     public function boot()
@@ -29,5 +35,15 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
         // want a breaking release yet.
         class_alias(Impersonate::class, 'STS\\FilamentImpersonate\\Impersonate');
+    }
+
+    protected function clearAuthHashes()
+    {
+        session()->forget(array_unique([
+            'password_hash_' . session('impersonate.guard'),
+            'password_hash_' . config('filament.auth.guard'),
+            'password_hash_' . auth()->getDefaultDriver(),
+            'password_hash_sanctum'
+        ]));
     }
 }
