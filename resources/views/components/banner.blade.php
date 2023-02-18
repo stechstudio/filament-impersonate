@@ -76,12 +76,12 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     @endif
 
     #impersonate-banner a:hover {
-        background-color: var(--impersonate-{{ $default }}-button-bg-color);
+        background-color: rgb(var(--impersonate-{{ $default }}-button-bg-color));
     }
 
     @if($style === 'auto')
     .dark #impersonate-banner a:hover {
-        background-color: var(--impersonate-dark-bg-color);
+        background-color: rgb(var(--impersonate-dark-bg-color));
     }
     @endif
     
