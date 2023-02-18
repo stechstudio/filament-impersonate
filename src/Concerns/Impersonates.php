@@ -43,9 +43,19 @@ trait Impersonates
         return $this->evaluate($this->redirectTo) ?? config('filament-impersonate.redirect_to');
     }
 
+    protected function canBeImpersonated($target): bool
+    {
+        $current = Filament::auth()->user();
+
+        return $current->isNot($target)
+            && !app(ImpersonateManager::class)->isImpersonating()
+            && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
+            && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
+    }
+
     public function impersonate($record): bool|Redirector|RedirectResponse
     {
-        if (!$this->allowed(Filament::auth()->user(), $record)) {
+        if (!$this->canBeImpersonated($record)) {
             return false;
         }
 
@@ -55,34 +65,11 @@ trait Impersonates
             $this->getGuard()
         );
 
-        $this->clearPasswordHashes();
-
-        session()->put('impersonate.back_to', request('fingerprint.path'));
+        session()->put([
+            'impersonate.back_to' => request('fingerprint.path'),
+            'impersonate.guard' => $this->getGuard()
+        ]);
 
         return redirect($this->getRedirectTo());
-    }
-
-    public function leave(): bool|Redirector|RedirectResponse
-    {
-        if(!app(ImpersonateManager::class)->isImpersonating()) {
-            return redirect('/');
-        }
-
-        app(ImpersonateManager::class)->leave();
-
-        $this->clearPasswordHashes();
-
-        return redirect(
-            session()->pull('impersonate.back_to') ?? config('filament.path')
-        );
-    }
-
-    protected function clearPasswordHashes()
-    {
-        session()->forget(array_unique([
-            'password_hash_' . $this->getGuard(),
-            'password_hash_' . config('filament.auth.guard'),
-            'password_hash_' . auth()->getDefaultDriver(),
-        ]));
     }
 }
