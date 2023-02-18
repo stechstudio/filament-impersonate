@@ -43,8 +43,10 @@ trait Impersonates
         return $this->evaluate($this->redirectTo) ?? config('filament-impersonate.redirect_to');
     }
 
-    protected static function allowed($current, $target): bool
+    protected function canBeImpersonated($target): bool
     {
+        $current = Filament::auth()->user();
+
         return $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
@@ -53,9 +55,14 @@ trait Impersonates
 
     public function impersonate($record): bool|Redirector|RedirectResponse
     {
-        if (!static::allowed(Filament::auth()->user(), $record)) {
+        if (!$this->canBeImpersonated($record)) {
             return false;
         }
+
+        session()->put([
+            'impersonate.back_to' => request('fingerprint.path'),
+            'impersonate.guard' => $this->getGuard()
+        ]);
 
         app(ImpersonateManager::class)->take(
             Filament::auth()->user(),
@@ -63,30 +70,6 @@ trait Impersonates
             $this->getGuard()
         );
 
-        session()->forget(array_unique([
-            'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . config('filament.auth.guard')
-        ]));
-        session()->put('impersonate.back_to', request('fingerprint.path'));
-
         return redirect($this->getRedirectTo());
-    }
-
-    public static function leave(): bool|Redirector|RedirectResponse
-    {
-        if(!app(ImpersonateManager::class)->isImpersonating()) {
-            return redirect('/');
-        }
-
-        app(ImpersonateManager::class)->leave();
-
-        session()->forget(array_unique([
-            'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . config('filament.auth.guard')
-        ]));
-
-        return redirect(
-            session()->pull('impersonate.back_to') ?? config('filament.path')
-        );
     }
 }

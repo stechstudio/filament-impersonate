@@ -2,7 +2,6 @@
 
 namespace STS\FilamentImpersonate\Tables\Actions;
 
-use Filament\Facades\Filament;
 use Filament\Tables\Actions\Action;
 use STS\FilamentImpersonate\Concerns\Impersonates;
 
@@ -18,6 +17,6 @@ class Impersonate extends Action
             ->iconButton()
             ->icon('impersonate::icon')
             ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(fn ($record) => !static::allowed(Filament::auth()->user(), $record));
+            ->hidden(fn ($record) => !$this->canBeImpersonated($record));
     }
 }
