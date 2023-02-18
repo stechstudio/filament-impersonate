@@ -18,6 +18,6 @@ class Impersonate extends Action
             ->iconButton()
             ->icon('impersonate::icon')
             ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(fn ($record) => !static::allowed(Filament::auth()->user(), $record));
+            ->hidden(fn ($record) => $this->allowed(Filament::auth()->user(), $record));
     }
 }
