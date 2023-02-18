@@ -59,16 +59,16 @@ trait Impersonates
             return false;
         }
 
+        session()->put([
+            'impersonate.back_to' => request('fingerprint.path'),
+            'impersonate.guard' => $this->getGuard()
+        ]);
+
         app(ImpersonateManager::class)->take(
             Filament::auth()->user(),
             $record,
             $this->getGuard()
         );
-
-        session()->put([
-            'impersonate.back_to' => request('fingerprint.path'),
-            'impersonate.guard' => $this->getGuard()
-        ]);
 
         return redirect($this->getRedirectTo());
     }
