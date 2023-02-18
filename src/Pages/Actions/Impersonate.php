@@ -17,6 +17,6 @@ class Impersonate extends Action
             ->label(__('filament-impersonate::action.label'))
             ->icon('impersonate::icon')
             ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(static fn ($record) => !$this->canBeImpersonated($record));
+            ->hidden(fn ($record) => !$this->canBeImpersonated($record));
     }
 }
