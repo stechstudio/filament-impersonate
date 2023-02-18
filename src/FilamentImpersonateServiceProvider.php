@@ -17,13 +17,8 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
     {
         $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
 
-        Event::listen(TakeImpersonation::class, function(TakeImpersonation $event) {
-            $this->clearAuthHashes();
-        });
-
-        Event::listen(LeaveImpersonation::class, function(LeaveImpersonation $event) {
-            $this->clearAuthHashes();
-        });
+        Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
+        Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
     }
 
     public function boot()
@@ -45,9 +40,10 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
     protected function clearAuthHashes()
     {
         session()->forget(array_unique([
-            //'password_hash_' . $this->getGuard(),
+            'password_hash_' . session('impersonate.guard'),
             'password_hash_' . config('filament.auth.guard'),
             'password_hash_' . auth()->getDefaultDriver(),
+            'password_hash_sanctum'
         ]));
     }
 }
