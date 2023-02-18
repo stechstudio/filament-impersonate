@@ -23,7 +23,7 @@ return [
             'light' => [
                 'text' => '#1f2937',
                 'background' => '#f3f4f6',
-                'border' => '#f3f4f6',
+                'border' => '#e8eaec',
             ],
             'dark' => [
                 'text' => '#f3f4f6',
