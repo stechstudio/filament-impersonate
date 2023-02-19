@@ -34,7 +34,9 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
         // Alias our table action for backwards compatibility.
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
         // want a breaking release yet.
-        class_alias(Impersonate::class, 'STS\\FilamentImpersonate\\Impersonate');
+        if(!class_exists('STS\\FilamentImpersonate\\Impersonate')) {
+            class_alias(Impersonate::class, 'STS\\FilamentImpersonate\\Impersonate');
+        }
     }
 
     protected function clearAuthHashes()
