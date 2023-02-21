@@ -2,44 +2,49 @@
 
 namespace STS\FilamentImpersonate;
 
+use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
-use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
+use Spatie\LaravelPackageTools\Package;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class FilamentImpersonateServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'filament-impersonate';
 
-    public function register()
+    public function registeringPackage(): void
     {
-        $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
-
         Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
     }
 
-    public function boot()
+    public function packageConfiguring(Package $package): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/filament-impersonate.php', 'filament-impersonate');
+        $package->hasRoute('web');
+    }
 
+    public function bootingPackage(): void
+    {
+        Filament::registerRenderHook(
+            'body.start',
+            static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
+        );
+
+        // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
-
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-
-        $this->loadTranslationsFrom(__DIR__.'/../lang', 'filament-impersonate');
 
         // Alias our table action for backwards compatibility.
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
         // want a breaking release yet.
-        if(!class_exists('STS\\FilamentImpersonate\\Impersonate')) {
-            class_alias(Impersonate::class, 'STS\\FilamentImpersonate\\Impersonate');
+        if(!class_exists(\STS\FilamentImpersonate\Impersonate::class)) {
+            class_alias(Impersonate::class, \STS\FilamentImpersonate\Impersonate::class);
         }
     }
 
-    protected function clearAuthHashes()
+    protected function clearAuthHashes(): void
     {
         session()->forget(array_unique([
             'password_hash_' . session('impersonate.guard'),
