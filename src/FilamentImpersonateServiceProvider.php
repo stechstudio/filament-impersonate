@@ -13,7 +13,7 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'filament-impersonate';
 
-    public function registeringPackage()
+    public function registeringPackage(): void
     {
         Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
@@ -24,7 +24,7 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
         $package->hasRoute('web');
     }
 
-    public function bootingPackage()
+    public function bootingPackage(): void
     {
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
@@ -32,12 +32,12 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
         // Alias our table action for backwards compatibility.
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
         // want a breaking release yet.
-        if(!class_exists('STS\\FilamentImpersonate\\Impersonate')) {
-            class_alias(Impersonate::class, 'STS\\FilamentImpersonate\\Impersonate');
+        if(!class_exists(\STS\FilamentImpersonate\Impersonate::class)) {
+            class_alias(Impersonate::class, \STS\FilamentImpersonate\Impersonate::class);
         }
     }
 
-    protected function clearAuthHashes()
+    protected function clearAuthHashes(): void
     {
         session()->forget(array_unique([
             'password_hash_' . session('impersonate.guard'),
