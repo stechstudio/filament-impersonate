@@ -1,1 +1,1 @@
-<x-impersonate::banner :fixed="true"/>
+<x-filament-impersonate::banner :fixed="true"/>
