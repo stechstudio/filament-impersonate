@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Spatie\LaravelPackageTools\Package;
-use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class FilamentImpersonateServiceProvider extends PluginServiceProvider
@@ -16,8 +15,6 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
 
     public function registeringPackage()
     {
-        $this->app['config']->push('filament.middleware.base', ImpersonationBanner::class);
-
         Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
     }
