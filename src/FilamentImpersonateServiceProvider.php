@@ -2,7 +2,9 @@
 
 namespace STS\FilamentImpersonate;
 
+use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
@@ -26,6 +28,11 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
 
     public function bootingPackage(): void
     {
+        Filament::registerRenderHook(
+            'body.start',
+            static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
+        );
+
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
 
