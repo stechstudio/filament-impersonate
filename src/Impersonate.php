@@ -80,6 +80,7 @@ class Impersonate extends Action
             'password_hash_' . Filament::getCurrentContext()->getAuthGuard()
         ]));
         session()->put('impersonate.back_to', request('fingerprint.path'));
+        session()->put('impersonate.back_to_context', Filament::getCurrentContext()->getId());
 
         return redirect($this->getRedirectTo());
     }
@@ -92,13 +93,15 @@ class Impersonate extends Action
 
         app(ImpersonateManager::class)->leave();
 
+        $context = Filament::getContext(session()->get('impersonate.back_to_context'));
+
         session()->forget(array_unique([
             'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . config('filament.auth.guard')
+            'password_hash_' . $context->getAuthGuard(),
         ]));
 
         return redirect(
-            session()->pull('impersonate.back_to') ?? config('filament.path')
+            session()->pull('impersonate.back_to') ?? $context->getUrl()
         );
     }
 }
