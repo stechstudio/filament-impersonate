@@ -97,6 +97,7 @@ class Impersonate extends Action
 
         session()->forget(array_unique([
             'password_hash_' . config('filament-impersonate.guard'),
+            'password_hash_' . Filament::getCurrentContext()->getAuthGuard(),
             'password_hash_' . $context->getAuthGuard(),
         ]));
 
