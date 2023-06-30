@@ -14,6 +14,8 @@ trait Impersonates
 
     protected Closure|string|null $redirectTo = null;
 
+    protected Closure|string|null $backTo = null;
+
     public static function getDefaultName(): ?string
     {
         return 'impersonate';
@@ -33,6 +35,13 @@ trait Impersonates
         return $this;
     }
 
+    public function backTo(Closure|string $backTo): self
+    {
+        $this->backTo = $backTo;
+
+        return $this;
+    }
+
     public function getGuard(): string
     {
         return $this->evaluate($this->guard) ?? config('filament-impersonate.guard');
@@ -41,6 +50,11 @@ trait Impersonates
     public function getRedirectTo(): string
     {
         return $this->evaluate($this->redirectTo) ?? config('filament-impersonate.redirect_to');
+    }
+
+    public function getBackTo(): ?string
+    {
+        return $this->evaluate($this->backTo);
     }
 
     protected function canBeImpersonated($target): bool
@@ -60,7 +74,7 @@ trait Impersonates
         }
 
         session()->put([
-            'impersonate.back_to' => request('fingerprint.path'),
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path'),
             'impersonate.guard' => $this->getGuard()
         ]);
 
