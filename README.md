@@ -21,7 +21,7 @@ composer require stechstudio/filament-impersonate
 
 ### 1. Add the plugin
 
-Add this plugin to your context:
+Add this plugin to your panel:
 
 ```php
 ->plugins([

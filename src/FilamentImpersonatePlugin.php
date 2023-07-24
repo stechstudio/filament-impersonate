@@ -2,8 +2,8 @@
 
 namespace STS\FilamentImpersonate;
 
-use Filament\Context;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 use STS\FilamentImpersonate\Middleware\ImpersonationBanner;
 
 class FilamentImpersonatePlugin implements Plugin
@@ -13,14 +13,14 @@ class FilamentImpersonatePlugin implements Plugin
         return 'filament-impersonate';
     }
 
-    public function register(Context $context): void
+    public function register(Panel $panel): void
     {
-        $context->middleware([
+        $panel->middleware([
             ImpersonationBanner::class
         ]);
     }
 
-    public function boot(Context $context): void
+    public function boot(Panel $panel): void
     {
         //
     }
