@@ -7,7 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Tables\Actions\Action;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Livewire\Redirector;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class Impersonate extends Action
 {
@@ -77,10 +77,10 @@ class Impersonate extends Action
 
         session()->forget(array_unique([
             'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . Filament::getCurrentContext()->getAuthGuard()
+            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard()
         ]));
         session()->put('impersonate.back_to', request('fingerprint.path'));
-        session()->put('impersonate.back_to_context', Filament::getCurrentContext()->getId());
+        session()->put('impersonate.back_to_panel', Filament::getCurrentPanel()->getId());
 
         return redirect($this->getRedirectTo());
     }
@@ -93,16 +93,15 @@ class Impersonate extends Action
 
         app(ImpersonateManager::class)->leave();
 
-        $context = Filament::getContext(session()->get('impersonate.back_to_context'));
-
+        $panel = Filament::getPanel(session()->get('impersonate.back_to_panel'));
         session()->forget(array_unique([
             'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . Filament::getCurrentContext()->getAuthGuard(),
-            'password_hash_' . $context->getAuthGuard(),
+            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard(),
+            'password_hash_' . $panel->getAuthGuard(),
         ]));
 
         return redirect(
-            session()->pull('impersonate.back_to') ?? $context->getUrl()
+            session()->pull('impersonate.back_to') ?? $panel->getUrl()
         );
     }
 }
