@@ -1,34 +1,24 @@
 <?php
 
-namespace STS\FilamentImpersonate;
+namespace STS\FilamentImpersonate\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Tables\Actions\Action;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 
-class Impersonate extends Action
+trait Impersonates
 {
     protected Closure|string|null $guard = null;
 
     protected Closure|string|null $redirectTo = null;
 
+    protected Closure|string|null $backTo = null;
+
     public static function getDefaultName(): ?string
     {
         return 'impersonate';
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this
-            ->iconButton()
-            ->icon('impersonate-icon')
-            ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(fn ($record) => !static::allowed(Filament::auth()->user(), $record));
     }
 
     public function guard(Closure|string $guard): self
@@ -45,6 +35,13 @@ class Impersonate extends Action
         return $this;
     }
 
+    public function backTo(Closure|string $backTo): self
+    {
+        $this->backTo = $backTo;
+
+        return $this;
+    }
+
     public function getGuard(): string
     {
         return $this->evaluate($this->guard) ?? config('filament-impersonate.guard');
@@ -55,8 +52,15 @@ class Impersonate extends Action
         return $this->evaluate($this->redirectTo) ?? config('filament-impersonate.redirect_to');
     }
 
-    protected static function allowed($current, $target): bool
+    public function getBackTo(): ?string
     {
+        return $this->evaluate($this->backTo);
+    }
+
+    protected function canBeImpersonated($target): bool
+    {
+        $current = Filament::auth()->user();
+
         return $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
@@ -65,9 +69,15 @@ class Impersonate extends Action
 
     public function impersonate($record): bool|Redirector|RedirectResponse
     {
-        if (!static::allowed(Filament::auth()->user(), $record)) {
+        if (!$this->canBeImpersonated($record)) {
             return false;
         }
+
+        session()->put([
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path'),
+            'impersonate.back_to_panel', Filament::getCurrentPanel()->getId(),
+            'impersonate.guard' => $this->getGuard()
+        ]);
 
         app(ImpersonateManager::class)->take(
             Filament::auth()->user(),
@@ -75,12 +85,10 @@ class Impersonate extends Action
             $this->getGuard()
         );
 
-        session()->forget(array_unique([
-            'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard()
-        ]));
-        session()->put('impersonate.back_to', request('fingerprint.path'));
-        session()->put('impersonate.back_to_panel', Filament::getCurrentPanel()->getId());
+        // session()->forget(array_unique([
+        //     'password_hash_' . config('filament-impersonate.guard'),
+        //     'password_hash_' . Filament::getCurrentPanel()->getAuthGuard()
+        // ]));
 
         return redirect($this->getRedirectTo());
     }

@@ -24,22 +24,24 @@ composer require stechstudio/filament-impersonate
 Add this plugin to your panel:
 
 ```php
+use STS\FilamentImpersonate\ImpersonatePlugin;
+
 ->plugins([
-    new FilamentImpersonatePlugin()
+    new ImpersonatePlugin()
 ])
 ```
 
-### 2. Add `Resource` action
+### 2. Add table action
 
 First open the resource where you want the impersonate action to appear. This is generally going to be your `UserResource` class.
 
-Go down to the `table` method. After defining the table columns, you want to `prependActions` and provide `Impersonate::make` as a new action for the table. Your class should look like this:
+Go down to the `table` method. After defining the table columns, you want to `prependActions` and provide `Impersonate` as a new action for the table. Your class should look like this:
 
 ```php
 namespace App\Filament\Resources;
 
 use Filament\Resources\Resource;
-use STS\FilamentImpersonate\Impersonate;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource {
     public static function table(Table $table)
@@ -49,7 +51,7 @@ class UserResource extends Resource {
                 // ...
             ])
             ->prependActions([
-                Impersonate::make('impersonate'), // <--- 
+                Impersonate::make(), // <--- 
             ]);
     }
 ```
@@ -62,7 +64,7 @@ return $table
         // ...
     ])
     ->actions([
-        Impersonate::make('impersonate'), // <---
+        Impersonate::make(), // <---
         // ...
     ]);
 ```
@@ -75,12 +77,40 @@ Impersonate::make('impersonate')
     ->redirectTo(route('some.other.route'));
 ```
     
+### 2. Add the page action
 
-### 3. Add the banner to your blade layout
+Now open the page where you would want the button to appear, this will commonly be `EditUser`;
+
+Go to the `getActions` method and add the `Impersonate` page action here. 
+
+```php
+<?php
+namespace App\Filament\Resources\UserResource\Pages;
+
+use App\Filament\Resources\UserResource;
+use Filament\Resources\Pages\EditRecord;
+use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+
+class EditUser extends EditRecord
+{
+    protected static string $resource = UserResource::class;
+
+    protected function getActions(): array
+    {
+        return [
+            Impersonate::make()->record($this->getRecord()) // <--
+        ];
+    }
+}
+```
+
+Note: you must pass the record in as seen in this example!
+
+### 4. Add the banner to your blade layout
 
 The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
 
-### 4. Profit!
+### 5. Profit!
 
 That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
 
@@ -130,7 +160,7 @@ The blade component has a few options you can customize.
 
 ### Style
 
-The banner is dark by default, you can set this to light:
+The banner is dark by default, you can set this to light, or auto.
 
 ```html
 <x-impersonate::banner style='light'/>
