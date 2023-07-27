@@ -19,19 +19,7 @@ composer require stechstudio/filament-impersonate
 
 ## Quickstart
 
-### 1. Add the plugin
-
-Add this plugin to your panel:
-
-```php
-use STS\FilamentImpersonate\ImpersonatePlugin;
-
-->plugins([
-    new ImpersonatePlugin()
-])
-```
-
-### 2. Add table action
+### 1. Add table action
 
 First open the resource where you want the impersonate action to appear. This is generally going to be your `UserResource` class.
 
@@ -106,11 +94,11 @@ class EditUser extends EditRecord
 
 Note: you must pass the record in as seen in this example!
 
-### 4. Add the banner to your blade layout
+### 3. Add the banner to your blade layout
 
 The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
 
-### 5. Profit!
+### 4. Profit!
 
 That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
 
