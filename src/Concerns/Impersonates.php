@@ -44,7 +44,7 @@ trait Impersonates
 
     public function getGuard(): string
     {
-        return $this->evaluate($this->guard) ?? config('filament-impersonate.guard');
+        return $this->evaluate($this->guard) ?? Filament::getCurrentPanel()->getAuthGuard();
     }
 
     public function getRedirectTo(): string
@@ -85,31 +85,6 @@ trait Impersonates
             $this->getGuard()
         );
 
-        // session()->forget(array_unique([
-        //     'password_hash_' . config('filament-impersonate.guard'),
-        //     'password_hash_' . Filament::getCurrentPanel()->getAuthGuard()
-        // ]));
-
         return redirect($this->getRedirectTo());
-    }
-
-    public static function leave(): bool|Redirector|RedirectResponse
-    {
-        if(!app(ImpersonateManager::class)->isImpersonating()) {
-            return redirect('/');
-        }
-
-        app(ImpersonateManager::class)->leave();
-
-        $panel = Filament::getPanel(session()->get('impersonate.back_to_panel'));
-        session()->forget(array_unique([
-            'password_hash_' . config('filament-impersonate.guard'),
-            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard(),
-            'password_hash_' . $panel->getAuthGuard(),
-        ]));
-
-        return redirect(
-            session()->pull('impersonate.back_to') ?? $panel->getUrl()
-        );
     }
 }

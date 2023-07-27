@@ -15,7 +15,7 @@ class Impersonate extends Action
 
         $this
             ->iconButton()
-            ->icon('impersonate::icon')
+            ->icon('impersonate-icon')
             ->action(fn ($record) => $this->impersonate($record))
             ->hidden(fn ($record) => !$this->canBeImpersonated($record));
     }
