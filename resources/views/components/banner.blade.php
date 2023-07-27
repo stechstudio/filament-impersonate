@@ -3,7 +3,7 @@
 @if(app('impersonate')->isImpersonating())
 
 @php
-$display = $display ?? Filament\Facades\Filament::getUserName(auth()->user());
+$display = $display ?? Filament\Facades\Filament::getUserName(Filament\Facades\Filament::auth()->user());
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 $position = $position ?? config('filament-impersonate.banner.position');
 $borderPosition = $position === 'top' ? 'bottom' : 'top';
@@ -85,7 +85,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         background-color: rgb(var(--impersonate-dark-button-bg-color));
     }
     @endif
-    
+
     @if($fixed && $position === 'top')
     .filament-main-topbar {
         top: var(--impersonate-banner-height);

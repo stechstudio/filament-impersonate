@@ -6,7 +6,7 @@ use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Livewire\Redirector;
+use Livewire\Features\SupportRedirects\Redirector;
 
 trait Impersonates
 {
@@ -44,7 +44,7 @@ trait Impersonates
 
     public function getGuard(): string
     {
-        return $this->evaluate($this->guard) ?? config('filament-impersonate.guard');
+        return $this->evaluate($this->guard) ?? Filament::getCurrentPanel()->getAuthGuard();
     }
 
     public function getRedirectTo(): string
@@ -74,7 +74,7 @@ trait Impersonates
         }
 
         session()->put([
-            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path'),
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path') ?? Filament::getCurrentPanel()->getUrl(),
             'impersonate.guard' => $this->getGuard()
         ]);
 

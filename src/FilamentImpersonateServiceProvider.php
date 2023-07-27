@@ -3,27 +3,35 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\Facades\Filament;
-use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use BladeUI\Icons\Factory;
 
-class FilamentImpersonateServiceProvider extends PluginServiceProvider
+class FilamentImpersonateServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-impersonate';
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name(static::$name)
+            ->hasRoute('web')
+            ->hasConfigFile()
+            ->hasTranslations()
+            ->hasViews();
+    }
 
     public function registeringPackage(): void
     {
         Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
-    }
 
-    public function packageConfiguring(Package $package): void
-    {
-        $package->hasRoute('web');
+        $this->registerIcon();
     }
 
     public function bootingPackage(): void
@@ -48,9 +56,20 @@ class FilamentImpersonateServiceProvider extends PluginServiceProvider
     {
         session()->forget(array_unique([
             'password_hash_' . session('impersonate.guard'),
-            'password_hash_' . config('filament.auth.guard'),
+            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard(),
+            'password_hash_' . Filament::getPanel(session()->get('impersonate.back_to_panel'))->getAuthGuard(),
             'password_hash_' . auth()->getDefaultDriver(),
             'password_hash_sanctum'
         ]));
+    }
+
+    protected function registerIcon(): void
+    {
+        $this->callAfterResolving(Factory::class, function (Factory $factory) {
+            $factory->add('impersonate', [
+                'path' => __DIR__.'/../resources/views/icons',
+                'prefix' => 'impersonate',
+            ]);
+        });
     }
 }
