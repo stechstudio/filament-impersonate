@@ -3,12 +3,10 @@
     "description": "A Filament package to impersonate your users.",
     "type": "library",
     "minimum-stability": "dev",
-    "require-dev": {
-        "filament/filament": "^3.0@beta"
-    },
     "license": "MIT",
     "require": {
-        "lab404/laravel-impersonate": "^1.7"
+        "lab404/laravel-impersonate": "^1.7",
+        "filament/filament": "^3.0@beta"
     },
     "autoload": {
         "psr-4": {
