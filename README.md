@@ -23,7 +23,7 @@ composer require stechstudio/filament-impersonate
 
 First open the resource where you want the impersonate action to appear. This is generally going to be your `UserResource` class.
 
-Go down to the `table` method. After defining the table columns, you want to `prependActions` and provide `Impersonate` as a new action for the table. Your class should look like this:
+Go down to the `table` method. After defining the table columns, you want to add `Impersonate` as a new action for the table via `actions` method. Your class should look like this:
 
 ```php
 namespace App\Filament\Resources;
@@ -38,23 +38,10 @@ class UserResource extends Resource {
             ->columns([
                 // ...
             ])
-            ->prependActions([
+            ->actions([
                 Impersonate::make(), // <--- 
             ]);
     }
-```
-
-If you already have an `actions()` method defined for your table, place the `Impersonate::make` directly into the `actions` array.
-
-```php
-return $table
-    ->columns([
-        // ...
-    ])
-    ->actions([
-        Impersonate::make(), // <---
-        // ...
-    ]);
 ```
 
 You can also define a `guard` and `redirectTo` for the action:
