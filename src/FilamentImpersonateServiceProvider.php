@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Spatie\LaravelPackageTools\Package;
+use Filament\Support\Facades\FilamentView;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use BladeUI\Icons\Factory;
@@ -28,16 +29,16 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
     public function registeringPackage(): void
     {
-        Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
-        Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
+        Event::listen(TakeImpersonation::class, fn () => $this->clearAuthHashes());
+        Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
 
         $this->registerIcon();
     }
 
     public function bootingPackage(): void
     {
-        Filament::registerRenderHook(
-            'body.start',
+        FilamentView::registerRenderHook(
+            'panels::body.start',
             static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
         );
 
@@ -47,7 +48,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
         // Alias our table action for backwards compatibility.
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
         // want a breaking release yet.
-        if(!class_exists(\STS\FilamentImpersonate\Impersonate::class)) {
+        if (!class_exists(\STS\FilamentImpersonate\Impersonate::class)) {
             class_alias(Impersonate::class, \STS\FilamentImpersonate\Impersonate::class);
         }
     }
