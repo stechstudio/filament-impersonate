@@ -29,8 +29,8 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
     public function registeringPackage(): void
     {
-        Event::listen(TakeImpersonation::class, fn () => $this->clearAuthHashes());
-        Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
+        Event::listen(TakeImpersonation::class, fn() => $this->clearAuthHashes());
+        Event::listen(LeaveImpersonation::class, fn() => $this->clearAuthHashes());
 
         $this->registerIcon();
     }
@@ -38,12 +38,12 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         FilamentView::registerRenderHook(
-            'panels::body.start',
-            static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
+            'panels::' . config('filament-impersonate.position'),
+            static fn(): string => Blade::render("<x-filament-impersonate::" . config('filament-impersonate.render') . "/>")
         );
 
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'impersonate');
 
         // Alias our table action for backwards compatibility.
         // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
@@ -68,7 +68,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
     {
         $this->callAfterResolving(Factory::class, function (Factory $factory) {
             $factory->add('impersonate', [
-                'path' => __DIR__.'/../resources/views/icons',
+                'path' => __DIR__ . '/../resources/views/icons',
                 'prefix' => 'impersonate',
             ]);
         });
