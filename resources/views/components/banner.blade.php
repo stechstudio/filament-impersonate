@@ -34,7 +34,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
 
-    body.filament-body > div.filament-app-layout > aside.filament-sidebar {
+    div.fi-layout > aside.fi-sidebar {
         padding-{{ $position }}: var(--impersonate-banner-height);
     }
 
@@ -87,7 +87,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     @endif
 
     @if($fixed && $position === 'top')
-    .filament-main-topbar {
+    .fi-topbar {
         top: var(--impersonate-banner-height);
     }
     @endif
