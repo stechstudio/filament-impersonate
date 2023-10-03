@@ -30,7 +30,8 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         --impersonate-dark-button-bg-color: {{ implode(',', sscanf($styles['light']['background'], "#%02x%02x%02x")) }};
         --impersonate-dark-button-text-color: {{ $styles['light']['text'] }};
     }
-    html {
+
+    div.fi-layout > div.fi-main-ctn {
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
 
