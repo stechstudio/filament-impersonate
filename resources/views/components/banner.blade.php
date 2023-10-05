@@ -1,4 +1,4 @@
-@props(['style', 'display', 'fixed', 'position'])
+@props(['style', 'display', 'fixed', 'position', 'panel'])
 
 @if(app('impersonate')->isImpersonating())
 
@@ -12,6 +12,7 @@ $style = $style ?? config('filament-impersonate.banner.style');
 $styles = config('filament-impersonate.banner.styles');
 $default = $style === 'auto' ? 'light' : $style;
 $flipped = $default === 'dark' ? 'light' : 'dark';
+$isFilamentPanel = $panel ?? false;
 @endphp
 
 <style>
@@ -31,9 +32,16 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         --impersonate-dark-button-text-color: {{ $styles['light']['text'] }};
     }
 
+    @if($isFilamentPanel)
     div.fi-layout > div.fi-main-ctn {
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
+    @else
+    html {
+        margin-{{ $position }}: var(--impersonate-banner-height);
+    }
+    @endif
+        
 
     div.fi-layout > aside.fi-sidebar {
         padding-{{ $position }}: var(--impersonate-banner-height);

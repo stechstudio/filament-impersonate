@@ -39,7 +39,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
     {
         FilamentView::registerRenderHook(
             'panels::body.start',
-            static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
+            static fn (): string => Blade::render("<x-filament-impersonate::banner :panel='true'/>")
         );
 
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
