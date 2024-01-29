@@ -34,9 +34,6 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
 
-    div.fi-layout > aside.fi-sidebar {
-        padding-{{ $position }}: var(--impersonate-banner-height);
-    }
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
@@ -86,9 +83,23 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     }
     @endif
 
-    @if($fixed && $position === 'top')
+    @if($fixed)
+    div.fi-layout > aside.fi-sidebar {
+        height: calc(100vh - var(--impersonate-banner-height));
+    }
+
+    @if($position === 'top')
     .fi-topbar {
         top: var(--impersonate-banner-height);
+    }
+    div.fi-layout > aside.fi-sidebar {
+        top: var(--impersonate-banner-height);
+    }
+    @endif
+
+    @else
+    div.fi-layout > aside.fi-sidebar {
+        padding-bottom: var(--impersonate-banner-height);
     }
     @endif
 
