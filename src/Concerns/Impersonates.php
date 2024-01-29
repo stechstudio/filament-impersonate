@@ -74,7 +74,7 @@ trait Impersonates
         }
 
         session()->put([
-            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path') ?? Filament::getCurrentPanel()->getUrl(),
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentPanel()->getUrl(),
             'impersonate.guard' => $this->getGuard()
         ]);
 
