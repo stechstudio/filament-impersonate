@@ -47,7 +47,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         background-color: var(--impersonate-{{ $default }}-bg-color);
         color: var(--impersonate-{{ $default }}-text-color);
         border-{{ $borderPosition }}: 1px solid var(--impersonate-{{ $default }}-border-color);
-        z-index: 1000;
+        z-index: 45;
     }
 
     @if($style === 'auto')
