@@ -10,6 +10,9 @@ return [
     'leave_middleware' => env('FILAMENT_IMPERSONATE_LEAVE_MIDDLEWARE', 'web'),
 
     'banner' => [
+        // Available hooks: https://filamentphp.com/docs/3.x/support/render-hooks#available-render-hooks
+        'render_hook' => env('FILAMENT_IMPERSONATE_BANNER_RENDER_HOOK', 'panels::body.start'),
+    
         // Currently supports 'dark', 'light' and 'auto'.
         'style' => env('FILAMENT_IMPERSONATE_BANNER_STYLE', 'dark'),
 
