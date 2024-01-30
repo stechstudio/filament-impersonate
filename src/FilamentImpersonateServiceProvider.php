@@ -38,7 +38,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         FilamentView::registerRenderHook(
-            config('filament-impersonate.banner.render_hook'),
+            config('filament-impersonate.banner.render_hook', 'panels::body.start'),
             static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
         );
 
