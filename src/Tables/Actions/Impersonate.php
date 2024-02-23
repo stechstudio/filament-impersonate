@@ -14,6 +14,7 @@ class Impersonate extends Action
         parent::setUp();
 
         $this
+            ->label(__('filament-impersonate::action.label'))
             ->iconButton()
             ->icon('impersonate-icon')
             ->action(fn ($record) => $this->impersonate($record))
