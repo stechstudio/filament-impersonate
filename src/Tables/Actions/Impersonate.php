@@ -17,6 +17,7 @@ class Impersonate extends Action
             ->label(__('filament-impersonate::action.label'))
             ->iconButton()
             ->icon('impersonate-icon')
+            ->before(fn (Component $livewire) => $livewire->dispatchFormEvent(false))
             ->action(fn ($record) => $this->impersonate($record))
             ->hidden(fn ($record) => !$this->canBeImpersonated($record));
     }
