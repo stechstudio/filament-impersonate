@@ -5,8 +5,9 @@ namespace STS\FilamentImpersonate\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
-use Lab404\Impersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Events\Impersonated;
 use Livewire\Features\SupportRedirects\Redirector;
+use Lab404\Impersonate\Services\ImpersonateManager;
 
 trait Impersonates
 {
@@ -83,6 +84,8 @@ trait Impersonates
             $record,
             $this->getGuard()
         );
+
+        dispatch(new Impersonated(Filament::auth()->user(), $record));
 
         return redirect($this->getRedirectTo());
     }
