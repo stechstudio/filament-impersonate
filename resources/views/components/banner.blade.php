@@ -34,6 +34,9 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
 
+    .fi-modal-slide-over-window {
+        margin-top: 50px;
+    }
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
