@@ -51,6 +51,15 @@ Impersonate::make('impersonate')
     ->guard('another-guard')
     ->redirectTo(route('some.other.route'));
 ```
+
+#### Setting a Custom Impersonation Record
+
+You can customize the impersonation target by setting a specific impersonation record. This is particularly useful when the target user is related to another entity, and you need to specify which user should be impersonated.
+
+```php
+Impersonate::make('impersonate')
+    ->setImpersonateRecord(fn($record) => $record->user);
+```
     
 ### 2. Add the page action
 
