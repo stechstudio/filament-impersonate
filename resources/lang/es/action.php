@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'تقليد',
+    'label' => 'Personificar',
 ];

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'impersonating' => 'المستخدم المقلّد',
-    'leave' => 'مغادرة',
+    'impersonating' => 'Haciéndose pasar por usuario',
+    'leave' => 'Salir',
 ];
