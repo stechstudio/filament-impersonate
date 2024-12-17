@@ -35,7 +35,7 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     }
 
     .fi-modal-slide-over-window {
-        margin-top: 50px;
+        margin-top: var(--impersonate-banner-height);
     }
 
     #impersonate-banner {
