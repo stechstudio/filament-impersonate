@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'label' => 'Hacerse pasar por',
+    'label' => 'Suplantar',
 ];
