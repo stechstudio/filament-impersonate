@@ -16,6 +16,8 @@ trait Impersonates
 
     protected Closure|string|null $backTo = null;
 
+    protected Closure|null $impersonateRecord = null;
+
     public static function getDefaultName(): ?string
     {
         return 'impersonate';
@@ -85,5 +87,17 @@ trait Impersonates
         );
 
         return redirect($this->getRedirectTo());
+    }
+
+    public function setImpersonateRecord(Closure $record): static
+    {
+        $this->impersonateRecord = $record;
+
+        return $this;
+    }
+
+    public function getImpersonateRecord()
+    {
+        return $this->evaluate($this->impersonateRecord);
     }
 }
