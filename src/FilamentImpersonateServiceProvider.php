@@ -61,11 +61,11 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
             'password_hash_sanctum'
         ];
 
-        if(Filament::getCurrentPanel()){
+        if (Filament::getCurrentPanel()) {
             $values[] = 'password_hash_' . Filament::getCurrentPanel()->getAuthGuard();
         }
 
-        if(Filament::getPanel(session()->get('impersonate.back_to_panel'))){
+        if (Filament::getPanel(session()->get('impersonate.back_to_panel'))) {
             $values[] = 'password_hash_' . Filament::getPanel(session()->get('impersonate.back_to_panel'))->getAuthGuard();
         }
 
