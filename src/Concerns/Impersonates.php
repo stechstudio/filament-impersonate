@@ -64,6 +64,7 @@ trait Impersonates
 
         return $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
+            && app(ImpersonateManager::class)->getImpersonatorGuardUsingName() == \Filament\Facades\Filament::getAuthGuard()
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
             && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
     }
@@ -88,7 +89,9 @@ trait Impersonates
             $this->getGuard()
         );
 
-        Auth::guard($oldGuard)->quietLogin($impersonator);
+        if($this->getGuard() !== Filament::getAuthGuard()) {
+            Auth::guard($oldGuard)->quietLogin($impersonator);
+        }
 
         return redirect($this->getRedirectTo());
     }

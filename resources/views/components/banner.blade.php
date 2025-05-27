@@ -3,7 +3,11 @@
 @if(
     app('impersonate')->isImpersonating()
     &&
-    app('impersonate')->getImpersonatorGuardUsingName() === \Filament\Facades\Filament::getAuthGuard()
+    (
+        !empty(\Filament\Facades\Filament::getAuthGuard())
+        &&
+        app('impersonate')?->getImpersonatorGuardUsingName() === \Filament\Facades\Filament::getAuthGuard()
+    )
 )
 
 @php
