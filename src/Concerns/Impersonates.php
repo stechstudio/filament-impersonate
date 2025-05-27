@@ -64,7 +64,7 @@ trait Impersonates
 
         return $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
-            && app(ImpersonateManager::class)->getImpersonatorGuardUsingName() == \Filament\Facades\Filament::getAuthGuard()
+            && app(ImpersonateManager::class)->getImpersonatorGuardUsingName() !== \Filament\Facades\Filament::getAuthGuard()
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
             && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
     }
