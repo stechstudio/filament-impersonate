@@ -5,6 +5,7 @@ namespace STS\FilamentImpersonate\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -78,11 +79,16 @@ trait Impersonates
             'impersonate.guard' => $this->getGuard()
         ]);
 
+        $oldGuard = Auth::getDefaultDriver();
+        $impersonator = Filament::auth()->user();
+
         app(ImpersonateManager::class)->take(
             Filament::auth()->user(),
             $record,
             $this->getGuard()
         );
+
+        Auth::guard($oldGuard)->quietLogin($impersonator);
 
         return redirect($this->getRedirectTo());
     }
