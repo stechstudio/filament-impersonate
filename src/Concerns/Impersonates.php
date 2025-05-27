@@ -80,18 +80,11 @@ trait Impersonates
             'impersonate.guard' => $this->getGuard()
         ]);
 
-        $oldGuard = Auth::getDefaultDriver();
-        $impersonator = Filament::auth()->user();
-
         app(ImpersonateManager::class)->take(
             Filament::auth()->user(),
             $record,
             $this->getGuard()
         );
-
-        if($this->getGuard() !== Filament::getAuthGuard()) {
-            Auth::guard($oldGuard)->quietLogin($impersonator);
-        }
 
         return redirect($this->getRedirectTo());
     }
