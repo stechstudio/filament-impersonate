@@ -5,7 +5,6 @@ namespace STS\FilamentImpersonate\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 
