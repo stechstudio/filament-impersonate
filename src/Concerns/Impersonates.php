@@ -44,7 +44,7 @@ trait Impersonates
 
     public function getGuard(): string
     {
-        return $this->evaluate($this->guard) ?? Filament::getCurrentPanel()->getAuthGuard();
+        return $this->evaluate($this->guard) ?? Filament::getCurrentOrDefaultPanel()->getAuthGuard();
     }
 
     public function getRedirectTo(): string
@@ -74,7 +74,7 @@ trait Impersonates
         }
 
         session()->put([
-            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentPanel()->getUrl(),
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentOrDefaultPanel()->getUrl(),
             'impersonate.guard' => $this->getGuard()
         ]);
 

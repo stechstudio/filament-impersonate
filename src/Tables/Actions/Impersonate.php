@@ -2,7 +2,7 @@
 
 namespace STS\FilamentImpersonate\Tables\Actions;
 
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use STS\FilamentImpersonate\Concerns\Impersonates;
 
 class Impersonate extends Action

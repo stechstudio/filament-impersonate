@@ -2,11 +2,11 @@
     "name": "stechstudio/filament-impersonate",
     "description": "A Filament package to impersonate your users.",
     "type": "library",
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "license": "MIT",
     "require": {
         "lab404/laravel-impersonate": "^1.7",
-        "filament/filament": "^3.0"
+        "filament/filament": "^4.0"
     },
     "autoload": {
         "psr-4": {

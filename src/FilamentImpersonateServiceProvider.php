@@ -57,7 +57,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
     {
         session()->forget(array_unique([
             'password_hash_' . session('impersonate.guard'),
-            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard(),
+            'password_hash_' . Filament::getCurrentOrDefaultPanel()->getAuthGuard(),
             'password_hash_' . Filament::getPanel(session()->get('impersonate.back_to_panel'))->getAuthGuard(),
             'password_hash_' . auth()->getDefaultDriver(),
             'password_hash_sanctum'
