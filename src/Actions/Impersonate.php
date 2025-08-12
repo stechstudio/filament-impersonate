@@ -1,15 +1,28 @@
 <?php
 
-namespace STS\FilamentImpersonate\Concerns;
+namespace STS\FilamentImpersonate\Actions;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 
-trait Impersonates
+class Impersonate extends Action
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this
+            ->label(__('filament-impersonate::action.label'))
+            ->icon('impersonate-icon')
+            ->action(fn ($record) => $this->impersonate($record))
+            ->hidden(fn ($record) => !$this->canBeImpersonated($record));
+    }
+
     protected Closure|string|null $guard = null;
 
     protected Closure|string|null $redirectTo = null;
@@ -44,7 +57,7 @@ trait Impersonates
 
     public function getGuard(): string
     {
-        return $this->evaluate($this->guard) ?? Filament::getCurrentPanel()->getAuthGuard();
+        return $this->evaluate($this->guard) ?? Filament::getCurrentOrDefaultPanel()->getAuthGuard();
     }
 
     public function getRedirectTo(): string
@@ -74,7 +87,7 @@ trait Impersonates
         }
 
         session()->put([
-            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentPanel()->getUrl(),
+            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentOrDefaultPanel()->getUrl(),
             'impersonate.guard' => $this->getGuard()
         ]);
 
@@ -86,4 +99,5 @@ trait Impersonates
 
         return redirect($this->getRedirectTo());
     }
+
 }

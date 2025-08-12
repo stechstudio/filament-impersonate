@@ -45,23 +45,36 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
 
-        // Alias our table action for backwards compatibility.
-        // STS\FilamentImpersonate\Impersonate is where that class used to exist, and I don't
-        // want a breaking release yet.
-        if (!class_exists(\STS\FilamentImpersonate\Impersonate::class)) {
-            class_alias(Impersonate::class, \STS\FilamentImpersonate\Impersonate::class);
-        }
+
+
     }
 
     protected function clearAuthHashes(): void
     {
-        session()->forget(array_unique([
-            'password_hash_' . session('impersonate.guard'),
-            'password_hash_' . Filament::getCurrentPanel()->getAuthGuard(),
-            'password_hash_' . Filament::getPanel(session()->get('impersonate.back_to_panel'))->getAuthGuard(),
+        $hashes = [
+            'password_hash_sanctum',
             'password_hash_' . auth()->getDefaultDriver(),
-            'password_hash_sanctum'
-        ]));
+        ];
+
+        if ($guard = session('impersonate.guard')) {
+            $hashes[] = 'password_hash_' . $guard;
+        }
+
+        try {
+            if ($panel = Filament::getCurrentOrDefaultPanel()) {
+                $hashes[] = 'password_hash_' . $panel->getAuthGuard();
+            }
+
+            if ($backToPanelId = session()->get('impersonate.back_to_panel')) {
+                if ($panel = Filament::getPanel($backToPanelId)) {
+                    $hashes[] = 'password_hash_' . $panel->getAuthGuard();
+                }
+            }
+        } catch (\Throwable $e) {
+            // Log or handle the error if needed
+        }
+
+        session()->forget(array_unique($hashes));
     }
 
     protected function registerIcon(): void

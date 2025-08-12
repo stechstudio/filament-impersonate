@@ -56,15 +56,13 @@ Impersonate::make('impersonate')
 
 Now open the page where you would want the button to appear, this will commonly be `EditUser`;
 
-Go to the `getActions` method and add the `Impersonate` page action here. 
+Go to the `getActions` method and add the `Impersonate` page action here.
 
 ```php
 <?php
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\EditRecord;
-use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use App\Filament\Resources\UserResource;use Filament\Resources\Pages\EditRecord;use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
