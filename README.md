@@ -156,3 +156,27 @@ The banner will show the name of the impersonated user, assuming there is a `nam
 <x-impersonate::banner :display='auth()->user()->email'/>
 ```
 
+## Potential Issues and Workarounds
+
+### 403 when a ListUsers widget has `InteractsWithPageTable`
+
+**TL;DR:** Add a guard clause like this to your `UserPolicy::viewAny()` method:
+
+```php
+<?php
+
+public function viewAny(User $user): bool
+{
+    if (app('impersonate')->isImpersonating()) {
+        return true;
+    }
+
+    // ... Any other checks here
+}
+```
+
+The core of this problem is that the Livewire components on the page attempt to re-render before the redirect occurs. 
+
+Then, even with a ->redirectTo() set, if your policies prevent the impersonated user from accessing the user list that you're impersonating from, Filament attempts to re-render the table widgets, triggering a 403.
+
+There's not much we can do about this, but checking whether the current user is impersonating already will at least avoid the 403.
