@@ -62,7 +62,9 @@ Go to the `getActions` method and add the `Impersonate` page action here.
 <?php
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;use Filament\Resources\Pages\EditRecord;use STS\FilamentImpersonate\Actions\Impersonate;
+use App\Filament\Resources\UserResource;
+use Filament\Resources\Pages\EditRecord;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
@@ -79,9 +81,13 @@ class EditUser extends EditRecord
 
 Note: you must pass the record in as seen in this example!
 
-### 3. Add the banner to your blade layout
+### 3. Add the banner to your non-filament blade layout(s)
 
-The only other step is to display a notice in your app whenever you are impersonating another user. Open up your master layout file and add `<x-impersonate::banner/>` before the closing `</body>` tag.
+If your app is entirely contained within Filament, you're already done! The banner gets registered automatically.
+
+However, if you impersonate a user and then visit non-Filament pages or layouts, you'll be stuck. In those cases, you'll need to display a notice in your app whenever you are impersonating another user. 
+
+You can do that by adding `<x-impersonate::banner/>` to your master layout(s) before the closing `</body>` tag.
 
 ### 4. Profit!
 
