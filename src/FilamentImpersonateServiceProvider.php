@@ -44,9 +44,6 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
         // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
-
-
-
     }
 
     protected function clearAuthHashes(): void
