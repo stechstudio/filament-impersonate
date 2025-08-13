@@ -3,7 +3,12 @@
 @if(app('impersonate')->isImpersonating())
 
 @php
-$display = $display ?? Filament\Facades\Filament::getUserName(Filament\Facades\Filament::auth()->user());
+$user = Filament\Facades\Filament::auth()->user();
+if (blank($user)) {
+    $display = "(No user found)";
+}
+
+$display = $display ?? Filament\Facades\Filament::getUserName($user);
 $fixed = $fixed ?? config('filament-impersonate.banner.fixed');
 $position = $position ?? config('filament-impersonate.banner.position');
 $borderPosition = $position === 'top' ? 'bottom' : 'top';

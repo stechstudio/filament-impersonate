@@ -76,6 +76,7 @@ class Impersonate extends Action
 
         return $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
+            && (config('filament-impersonate.allow_soft_deleted') || !method_exists($target, 'bootSoftDeletes') || !$target->trashed())
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
             && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
     }

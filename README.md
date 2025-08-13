@@ -133,6 +133,9 @@ class User {
 }
 ``` 
 
+> [!NOTE]
+> As of 4.0, the plugin detects soft-deleted targets and prevents impersonation. You can set `FILAMENT_IMPERSONATE_ALLOW_SOFT_DELETED=true` in your .env to override this behavior.
+
 ## Customizing the banner
 
 The blade component has a few options you can customize. 

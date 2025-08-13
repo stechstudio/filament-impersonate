@@ -9,6 +9,8 @@ return [
     // We wire up a route for the "leave" button. You can change the middleware stack here if needed.
     'leave_middleware' => env('FILAMENT_IMPERSONATE_LEAVE_MIDDLEWARE', 'web'),
 
+    'allow_soft_deleted' => env('FILAMENT_IMPERSONATE_ALLOW_SOFT_DELETED', false),
+
     'banner' => [
         // Available hooks: https://filamentphp.com/docs/3.x/support/render-hooks#available-render-hooks
         'render_hook' => env('FILAMENT_IMPERSONATE_BANNER_RENDER_HOOK', 'panels::body.start'),
