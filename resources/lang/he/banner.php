@@ -2,5 +2,5 @@
 
 return [
     'impersonating' => 'מתחזה למשתמש',
-    'leave' => 'להתנתק',
+    'leave' => 'התנתק',
 ];
