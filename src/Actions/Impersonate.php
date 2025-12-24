@@ -5,22 +5,27 @@ namespace STS\FilamentImpersonate\Actions;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 
 class Impersonate extends Action
 {
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this
-            ->label(__('filament-impersonate::action.label'))
-            ->icon('impersonate-icon')
-            ->action(fn ($record) => $this->impersonate($record))
-            ->hidden(fn ($record) => !$this->canBeImpersonated($record));
+        $this->label(__('filament-impersonate::action.label'));
+        $this->icon('impersonate-icon');
+
+        $this->impersonateRecord(fn($record) => $record);
+        $this->action(fn() => $this->impersonate($this->evaluate($this->impersonateRecord)));
+
+        // Note: Not entirely sure why, but if we don't pass the record as a named parameter, this evaluate call doesn't
+        // automatically resolve it. The end result is that ->impersonateRecord(fn ($record) => $record->whateverRelationship)
+        // doesn't work in a table because `record` is null and thus the action invisible.
+        $this->visible(fn($record) => $this->canImpersonate($this->evaluate($this->impersonateRecord, ['record' => $record])));
     }
 
     protected Closure|string|null $guard = null;
@@ -28,6 +33,8 @@ class Impersonate extends Action
     protected Closure|string|null $redirectTo = null;
 
     protected Closure|string|null $backTo = null;
+
+    protected Authenticatable|Closure|null $impersonateRecord = null;
 
     public static function getDefaultName(): ?string
     {
@@ -70,11 +77,12 @@ class Impersonate extends Action
         return $this->evaluate($this->backTo);
     }
 
-    protected function canBeImpersonated($target): bool
+    protected function canImpersonate($target): bool
     {
         $current = Filament::auth()->user();
 
-        return $current->isNot($target)
+        return filled($target)
+            && $current->isNot($target)
             && !app(ImpersonateManager::class)->isImpersonating()
             && (config('filament-impersonate.allow_soft_deleted') || !method_exists($target, 'bootSoftDeletes') || !$target->trashed())
             && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
@@ -83,7 +91,7 @@ class Impersonate extends Action
 
     public function impersonate($record): bool|Redirector|RedirectResponse
     {
-        if (!$this->canBeImpersonated($record)) {
+        if (!$this->canImpersonate($record)) {
             return false;
         }
 
@@ -101,4 +109,10 @@ class Impersonate extends Action
         return redirect($this->getRedirectTo());
     }
 
+    public function impersonateRecord(Authenticatable|Closure|null $record, Closure|bool|null $visible = null): static
+    {
+        $this->impersonateRecord = $record;
+
+        return $this;
+    }
 }
