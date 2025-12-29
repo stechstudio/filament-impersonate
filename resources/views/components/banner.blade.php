@@ -97,6 +97,9 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     .fi-topbar {
         top: var(--impersonate-banner-height);
     }
+    .fi-modal.fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window {
+        margin-top: var(--impersonate-banner-height);
+    }
     div.fi-layout > aside.fi-sidebar {
         top: var(--impersonate-banner-height);
     }
