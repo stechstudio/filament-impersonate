@@ -1,6 +1,6 @@
 @props(['style', 'display', 'fixed', 'position'])
 
-@if(app('impersonate')->isImpersonating())
+@if(app('impersonate')->isImpersonating() && app('impersonate')->getImpersonatorGuardUsingName() === filament()->getCurrentPanel()->getAuthGuard())
 
 @php
 $user = Filament\Facades\Filament::auth()->user();
