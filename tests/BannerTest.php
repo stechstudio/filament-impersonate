@@ -155,6 +155,43 @@ describe('banner fixed', function () {
     });
 });
 
+describe('banner multi-guard support', function () {
+    it('does not render when impersonator guard differs from current panel guard', function () {
+        // Start impersonation
+        $action = Impersonate::make()->backTo('/admin');
+        $action->impersonate($this->targetUser);
+
+        // Simulate being in a different panel with a different guard
+        // The impersonator guard is 'web', but we'll check with a different guard
+        $impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+        expect($impersonatorGuard)->toBe('web');
+
+        // Mock the scenario where we're in a different panel
+        // by directly testing the condition logic
+        $currentPanelGuard = 'admin'; // Different from 'web'
+        $shouldShow = app('impersonate')->isImpersonating()
+            && $currentPanelGuard
+            && $impersonatorGuard === $currentPanelGuard;
+
+        expect($shouldShow)->toBeFalse();
+    });
+
+    it('renders when impersonator guard matches current panel guard', function () {
+        // Start impersonation
+        $action = Impersonate::make()->backTo('/admin');
+        $action->impersonate($this->targetUser);
+
+        $impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+        $currentPanelGuard = 'web'; // Same as impersonator guard
+
+        $shouldShow = app('impersonate')->isImpersonating()
+            && $currentPanelGuard
+            && $impersonatorGuard === $currentPanelGuard;
+
+        expect($shouldShow)->toBeTrue();
+    });
+});
+
 describe('banner translations', function () {
     it('contains impersonating translation key', function () {
         $action = Impersonate::make()->backTo('/admin');

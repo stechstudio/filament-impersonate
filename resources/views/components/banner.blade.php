@@ -1,6 +1,14 @@
 @props(['style', 'display', 'fixed', 'position'])
 
-@if(app('impersonate')->isImpersonating())
+@php
+$impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+$currentPanelGuard = Filament\Facades\Filament::getAuthGuard();
+$shouldShowBanner = app('impersonate')->isImpersonating()
+    && $currentPanelGuard
+    && $impersonatorGuard === $currentPanelGuard;
+@endphp
+
+@if($shouldShowBanner)
 
 @php
 $user = Filament\Facades\Filament::auth()->user();
