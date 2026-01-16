@@ -1,6 +1,7 @@
 # Filament Impersonate
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/stechstudio/filament-impersonate.svg?style=flat-square)](https://packagist.org/packages/stechstudio/filament-impersonate)
+[![Total Downloads](https://img.shields.io/packagist/dt/stechstudio/filament-impersonate.svg?style=flat-square)](https://packagist.org/packages/stechstudio/filament-impersonate)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 This is a plugin for [Filament](https://filamentadmin.com/) that makes it easy to impersonate your users. 
