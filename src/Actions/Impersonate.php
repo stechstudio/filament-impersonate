@@ -8,7 +8,6 @@ use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Lab404\Impersonate\Services\ImpersonateManager;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class Impersonate extends Action
 {
@@ -89,7 +88,7 @@ class Impersonate extends Action
             && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
     }
 
-    public function impersonate($record): bool|Redirector|RedirectResponse
+    public function impersonate($record): bool|RedirectResponse
     {
         if (!$this->canImpersonate($record)) {
             return false;
@@ -106,7 +105,15 @@ class Impersonate extends Action
             $this->getGuard()
         );
 
-        return redirect($this->getRedirectTo());
+        $redirectTo = $this->getRedirectTo();
+
+        // Use Livewire redirect when available (e.g., in modals), otherwise fall back to standard redirect
+        if ($this->getLivewire()) {
+            $this->redirect($redirectTo);
+            return true;
+        }
+
+        return redirect($redirectTo);
     }
 
     public function impersonateRecord(Authenticatable|Closure|null $record, Closure|bool|null $visible = null): static
