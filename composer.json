@@ -8,9 +8,19 @@
         "lab404/laravel-impersonate": "^1.7",
         "filament/filament": "^4.0|^5.0"
     },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
     "autoload": {
         "psr-4": {
             "STS\\FilamentImpersonate\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "STS\\FilamentImpersonate\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -18,6 +28,14 @@
             "providers": [
                 "STS\\FilamentImpersonate\\FilamentImpersonateServiceProvider"
             ]
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }
