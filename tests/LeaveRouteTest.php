@@ -102,4 +102,25 @@ describe('leave route', function () {
         // The route should still work via name
         expect(route('filament-impersonate.leave'))->toContain('filament-impersonate/leave');
     });
+
+    it('redirects to fallback when session back_to is missing', function () {
+        // Start impersonation without backTo set
+        app(ImpersonateManager::class)->take(
+            $this->admin,
+            $this->targetUser,
+            'web'
+        );
+
+        // Manually clear the back_to session to simulate corruption/loss
+        session()->forget('impersonate.back_to');
+
+        expect(app(ImpersonateManager::class)->isImpersonating())->toBeTrue();
+        expect(session('impersonate.back_to'))->toBeNull();
+
+        // Leave impersonation - should fallback to '/' instead of error
+        $response = $this->get(route('filament-impersonate.leave'));
+
+        $response->assertRedirect('/');
+        expect(app(ImpersonateManager::class)->isImpersonating())->toBeFalse();
+    });
 });
