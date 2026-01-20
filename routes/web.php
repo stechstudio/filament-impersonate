@@ -11,7 +11,7 @@ Route::get('filament-impersonate/leave', function () {
     app(ImpersonateManager::class)->leave();
 
     return redirect(
-        session()->pull('impersonate.back_to')
+        session()->pull('impersonate.back_to') ?? '/'
     );
 })
     ->when(
