@@ -108,9 +108,6 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
             .fi-modal.fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window {
                 padding-top: var(--impersonate-banner-height);
             }
-            div.fi-layout > div > aside.fi-sidebar {
-                margin-top: var(--impersonate-banner-height);
-            }
         @else
             .fi-page-main {
                 padding-bottom: var(--impersonate-banner-height);
@@ -118,15 +115,8 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
             .fi-modal.fi-modal-slide-over > .fi-modal-window-ctn > .fi-modal-window {
                 padding-bottom: var(--impersonate-banner-height);
             }
-            div.fi-layout > div > aside.fi-sidebar {
-                margin-bottom: var(--impersonate-banner-height);
-            }
         @endif
 
-    @else
-        div.fi-layout > div > aside.fi-sidebar {
-            margin-bottom: var(--impersonate-banner-height);
-        }
     @endif
 
     @media print{
