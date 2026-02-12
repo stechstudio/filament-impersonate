@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TakeImpersonation
+class EnterImpersonation
 {
     use Dispatchable, SerializesModels;
 

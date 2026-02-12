@@ -105,7 +105,7 @@ describe('leave route', function () {
 
     it('redirects to fallback when session back_to is missing', function () {
         // Start impersonation without backTo set
-        app(ImpersonateManager::class)->take(
+        app(ImpersonateManager::class)->enter(
             $this->admin,
             $this->targetUser,
             'web'

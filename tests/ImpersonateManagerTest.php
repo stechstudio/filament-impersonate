@@ -1,7 +1,7 @@
 <?php
 
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
-use STS\FilamentImpersonate\Events\TakeImpersonation;
+use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Guard\SessionGuard;
 use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Tests\User;
@@ -35,22 +35,22 @@ describe('isImpersonating', function () {
     });
 
     it('returns true after taking impersonation', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(app(ImpersonateManager::class)->isImpersonating())->toBeTrue();
     });
 
     it('returns false after leaving impersonation', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
         app(ImpersonateManager::class)->leave();
 
         expect(app(ImpersonateManager::class)->isImpersonating())->toBeFalse();
     });
 });
 
-describe('take', function () {
+describe('enter', function () {
     it('returns true on success', function () {
-        $result = app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        $result = app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect($result)->toBeTrue();
     });
@@ -58,30 +58,30 @@ describe('take', function () {
     it('switches the authenticated user', function () {
         expect(auth()->id())->toBe($this->admin->id);
 
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(auth()->id())->toBe($this->targetUser->id);
     });
 
     it('stores impersonator id in session', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(session(ImpersonateManager::SESSION_KEY))->toBe($this->admin->id);
     });
 
     it('stores guard names in session', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(session(ImpersonateManager::SESSION_GUARD))->toBe('web');
         expect(session(ImpersonateManager::SESSION_GUARD_USING))->toBe('web');
     });
 
-    it('fires TakeImpersonation event', function () {
-        Event::fake([TakeImpersonation::class]);
+    it('fires EnterImpersonation event', function () {
+        Event::fake([EnterImpersonation::class]);
 
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
-        Event::assertDispatched(TakeImpersonation::class, function ($event) {
+        Event::assertDispatched(EnterImpersonation::class, function ($event) {
             return $event->impersonator->is($this->admin)
                 && $event->impersonated->is($this->targetUser);
         });
@@ -90,14 +90,14 @@ describe('take', function () {
 
 describe('leave', function () {
     it('returns true on success', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
         $result = app(ImpersonateManager::class)->leave();
 
         expect($result)->toBeTrue();
     });
 
     it('restores the original user', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(auth()->id())->toBe($this->targetUser->id);
 
@@ -107,7 +107,7 @@ describe('leave', function () {
     });
 
     it('clears impersonation session data', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
         app(ImpersonateManager::class)->leave();
 
         expect(session(ImpersonateManager::SESSION_KEY))->toBeNull();
@@ -116,7 +116,7 @@ describe('leave', function () {
     });
 
     it('fires LeaveImpersonation event', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         Event::fake([LeaveImpersonation::class]);
 
@@ -135,7 +135,7 @@ describe('getImpersonator', function () {
     });
 
     it('returns the impersonator user when impersonating', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         $impersonator = app(ImpersonateManager::class)->getImpersonator();
 
@@ -150,7 +150,7 @@ describe('getImpersonatorId', function () {
     });
 
     it('returns the impersonator id when impersonating', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(app(ImpersonateManager::class)->getImpersonatorId())->toBe($this->admin->id);
     });
@@ -163,7 +163,7 @@ describe('guard names', function () {
     });
 
     it('returns correct guard names when impersonating', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(app(ImpersonateManager::class)->getImpersonatorGuardName())->toBe('web');
         expect(app(ImpersonateManager::class)->getImpersonatorGuardUsingName())->toBe('web');
@@ -172,7 +172,7 @@ describe('guard names', function () {
 
 describe('clear', function () {
     it('removes all impersonation session data', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         expect(session()->has(ImpersonateManager::SESSION_KEY))->toBeTrue();
 
@@ -185,12 +185,12 @@ describe('clear', function () {
 });
 
 describe('error handling', function () {
-    it('clears session state when take() fails', function () {
+    it('clears session state when enter() fails', function () {
         // Manually set a non-session guard to force a failure
         config(['auth.guards.token_guard' => ['driver' => 'token', 'provider' => 'users']]);
 
         // Attempt impersonation with a guard that is not a session guard
-        $result = app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'token_guard');
+        $result = app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'token_guard');
 
         expect($result)->toBeFalse();
 
@@ -199,7 +199,7 @@ describe('error handling', function () {
     });
 
     it('returns false when impersonator cannot be found during leave()', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         // Delete the impersonator to simulate missing user
         $this->admin->forceDelete();

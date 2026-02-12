@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
-use STS\FilamentImpersonate\Events\TakeImpersonation;
+use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Guard\SessionGuard;
 use STS\FilamentImpersonate\Services\ImpersonateManager;
 use Spatie\LaravelPackageTools\Package;
@@ -36,7 +36,7 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
         $this->app->scoped(ImpersonateManager::class);
         $this->app->alias(ImpersonateManager::class, 'impersonate');
 
-        Event::listen(TakeImpersonation::class, fn () => $this->clearAuthHashes());
+        Event::listen(EnterImpersonation::class, fn () => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
 
         // Clear stale impersonation state on real login/logout events

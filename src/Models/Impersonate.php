@@ -25,7 +25,7 @@ trait Impersonate
 
     public function impersonate(Model $user, ?string $guardName = null): bool
     {
-        return app(ImpersonateManager::class)->take($this, $user, $guardName);
+        return app(ImpersonateManager::class)->enter($this, $user, $guardName);
     }
 
     public function isImpersonated(): bool

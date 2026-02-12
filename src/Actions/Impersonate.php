@@ -99,7 +99,7 @@ class Impersonate extends Action
             'impersonate.guard' => $this->getGuard()
         ]);
 
-        app(ImpersonateManager::class)->take(
+        app(ImpersonateManager::class)->enter(
             Filament::auth()->user(),
             $record,
             $this->getGuard()

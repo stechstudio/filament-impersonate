@@ -5,7 +5,7 @@ namespace STS\FilamentImpersonate\Services;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
-use STS\FilamentImpersonate\Events\TakeImpersonation;
+use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Guard\SessionGuard;
 
 class ImpersonateManager
@@ -46,7 +46,7 @@ class ImpersonateManager
         return session(static::SESSION_GUARD_USING);
     }
 
-    public function take(Authenticatable $from, Authenticatable $to, ?string $guardName = null): bool
+    public function enter(Authenticatable $from, Authenticatable $to, ?string $guardName = null): bool
     {
         $this->saveAuthCookieInSession();
 
@@ -65,7 +65,7 @@ class ImpersonateManager
             return false;
         }
 
-        event(new TakeImpersonation($from, $to));
+        event(new EnterImpersonation($from, $to));
 
         return true;
     }

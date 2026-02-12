@@ -70,7 +70,7 @@ describe('canImpersonate authorization', function () {
 
     it('returns false when already impersonating', function () {
         // Start impersonation
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
 
         $thirdUser = User::create([
             'name' => 'Third User',
