@@ -6,10 +6,6 @@
 
 This is a plugin for [Filament](https://filamentadmin.com/) that makes it easy to impersonate your users. 
 
-### Credit
-
-This package uses [https://github.com/404labfr/laravel-impersonate](https://github.com/404labfr/laravel-impersonate) under the hood, and borrows heavily from [https://github.com/KABBOUCHI/nova-impersonate](https://github.com/KABBOUCHI/nova-impersonate).
-
 ## Installation
 
 You know the drill:
@@ -105,6 +101,18 @@ When you click on the impersonate icon you will be logged in as that user, and r
 
 All configuration can be managed with ENV variables, no need to publish and edit the config directly. Just check out the [config file](/config/filament-impersonate.php).
 
+## Facade API
+
+You can use the facade for programmatic impersonation control:
+
+```php
+use STS\FilamentImpersonate\Facades\Impersonation;
+
+if (Impersonation::isImpersonating()) {
+    Impersonation::leave();
+}
+```
+
 ## Authorization
 
 By default, only Filament admins can impersonate other users. You can control this by adding a `canImpersonate` method to your `FilamentUser` class:
@@ -166,9 +174,11 @@ The banner will show the name of the impersonated user, assuming there is a `nam
 ```php
 <?php
 
+use STS\FilamentImpersonate\Facades\Impersonation;
+
 public function viewAny(User $user): bool
 {
-    if (app('impersonate')->isImpersonating()) {
+    if (Impersonation::isImpersonating()) {
         return true;
     }
 

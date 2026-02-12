@@ -4,17 +4,13 @@ namespace STS\FilamentImpersonate\Tests;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Lab404\Impersonate\Models\Impersonate;
 
 class User extends Authenticatable
 {
-    use Impersonate, SoftDeletes;
+    use SoftDeletes;
 
     protected $guarded = [];
 
-    /**
-     * These static properties allow tests to control authorization behavior.
-     */
     public static bool $canImpersonateResult = true;
     public static bool $canBeImpersonatedResult = true;
     public static bool $checkCanImpersonate = true;

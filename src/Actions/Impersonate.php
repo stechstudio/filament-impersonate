@@ -7,26 +7,10 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
-use Lab404\Impersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 class Impersonate extends Action
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->label(__('filament-impersonate::action.label'));
-        $this->icon('impersonate-icon');
-
-        $this->impersonateRecord(fn($record) => $record);
-        $this->action(fn() => $this->impersonate($this->evaluate($this->impersonateRecord)));
-
-        // Note: Not entirely sure why, but if we don't pass the record as a named parameter, this evaluate call doesn't
-        // automatically resolve it. The end result is that ->impersonateRecord(fn ($record) => $record->whateverRelationship)
-        // doesn't work in a table because `record` is null and thus the action invisible.
-        $this->visible(fn($record) => $this->canImpersonate($this->evaluate($this->impersonateRecord, ['record' => $record])));
-    }
-
     protected Closure|string|null $guard = null;
 
     protected Closure|string|null $redirectTo = null;
@@ -35,28 +19,51 @@ class Impersonate extends Action
 
     protected Authenticatable|Closure|null $impersonateRecord = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label(__('filament-impersonate::action.label'));
+        $this->icon('impersonate-icon');
+
+        $this->impersonateRecord(fn ($record) => $record);
+        $this->action(fn () => $this->impersonate($this->evaluate($this->impersonateRecord)));
+
+        // Filament's evaluate() only auto-injects closure parameters that match named bindings.
+        // We pass 'record' explicitly so that closures like fn($record) => $record->relationship
+        // resolve correctly in table row contexts where the record isn't otherwise bound.
+        $this->visible(fn ($record) => $this->canImpersonate($this->evaluate($this->impersonateRecord, ['record' => $record])));
+    }
+
     public static function getDefaultName(): ?string
     {
         return 'impersonate';
     }
 
-    public function guard(Closure|string $guard): self
+    public function guard(Closure|string $guard): static
     {
         $this->guard = $guard;
 
         return $this;
     }
 
-    public function redirectTo(Closure|string $redirectTo): self
+    public function redirectTo(Closure|string $redirectTo): static
     {
         $this->redirectTo = $redirectTo;
 
         return $this;
     }
 
-    public function backTo(Closure|string $backTo): self
+    public function backTo(Closure|string $backTo): static
     {
         $this->backTo = $backTo;
+
+        return $this;
+    }
+
+    public function impersonateRecord(Authenticatable|Closure|null $record): static
+    {
+        $this->impersonateRecord = $record;
 
         return $this;
     }
@@ -76,50 +83,68 @@ class Impersonate extends Action
         return $this->evaluate($this->backTo);
     }
 
-    protected function canImpersonate($target): bool
-    {
-        $current = Filament::auth()->user();
-
-        return filled($target)
-            && $current->isNot($target)
-            && !app(ImpersonateManager::class)->isImpersonating()
-            && (config('filament-impersonate.allow_soft_deleted') || !method_exists($target, 'bootSoftDeletes') || !$target->trashed())
-            && (!method_exists($current, 'canImpersonate') || $current->canImpersonate())
-            && (!method_exists($target, 'canBeImpersonated') || $target->canBeImpersonated());
-    }
-
     public function impersonate($record): bool|RedirectResponse
     {
-        if (!$this->canImpersonate($record)) {
+        if (! $this->canImpersonate($record)) {
             return false;
         }
 
         session()->put([
-            'impersonate.back_to' => $this->getBackTo() ?? request('fingerprint.path', request()->header('referer')) ?? Filament::getCurrentOrDefaultPanel()->getUrl(),
-            'impersonate.guard' => $this->getGuard()
+            'impersonate.back_to' => $this->resolveBackToUrl(),
+            'impersonate.guard' => $this->getGuard(),
         ]);
 
-        app(ImpersonateManager::class)->take(
-            Filament::auth()->user(),
-            $record,
-            $this->getGuard()
-        );
+        if (! Impersonation::enter(Filament::auth()->user(), $record, $this->getGuard())) {
+            return false;
+        }
 
         $redirectTo = $this->getRedirectTo();
 
-        // Use Livewire redirect when available (e.g., in modals), otherwise fall back to standard redirect
         if ($this->getLivewire()) {
             $this->redirect($redirectTo);
+
             return true;
         }
 
         return redirect($redirectTo);
     }
 
-    public function impersonateRecord(Authenticatable|Closure|null $record, Closure|bool|null $visible = null): static
+    protected function canImpersonate($target): bool
     {
-        $this->impersonateRecord = $record;
+        $current = Filament::auth()->user();
 
-        return $this;
+        if (blank($target) || $current->is($target)) {
+            return false;
+        }
+
+        if (Impersonation::isImpersonating()) {
+            return false;
+        }
+
+        if ($this->isSoftDeleted($target) && ! config('filament-impersonate.allow_soft_deleted')) {
+            return false;
+        }
+
+        if (method_exists($current, 'canImpersonate') && ! $current->canImpersonate()) {
+            return false;
+        }
+
+        if (method_exists($target, 'canBeImpersonated') && ! $target->canBeImpersonated()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function isSoftDeleted($record): bool
+    {
+        return method_exists($record, 'trashed') && $record->trashed();
+    }
+
+    protected function resolveBackToUrl(): string
+    {
+        return $this->getBackTo()
+            ?? request('fingerprint.path', request()->header('referer'))
+            ?? Filament::getCurrentOrDefaultPanel()->getUrl();
     }
 }

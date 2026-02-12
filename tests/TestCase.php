@@ -13,7 +13,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
-use Lab404\Impersonate\ImpersonateServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 
@@ -36,7 +35,6 @@ class TestCase extends Orchestra
             SupportServiceProvider::class,
             ActionsServiceProvider::class,
             FilamentServiceProvider::class,
-            ImpersonateServiceProvider::class,
             FilamentImpersonateServiceProvider::class,
         ];
     }

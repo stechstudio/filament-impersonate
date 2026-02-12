@@ -1,9 +1,9 @@
 <?php
 
-use Lab404\Impersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Actions\Impersonate;
-use STS\FilamentImpersonate\Tests\User;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Tests\Provider;
+use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
     User::resetAuthorizationDefaults();
@@ -26,8 +26,8 @@ beforeEach(function () {
 afterEach(function () {
     User::resetAuthorizationDefaults();
 
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 
@@ -105,7 +105,7 @@ describe('action visibility', function () {
     });
 
     it('is hidden when already impersonating', function () {
-        app(ImpersonateManager::class)->take($this->admin, $this->targetUser, 'web');
+        Impersonation::enter($this->admin, $this->targetUser, 'web');
 
         $thirdUser = User::create([
             'name' => 'Third User',

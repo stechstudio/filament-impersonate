@@ -2,15 +2,21 @@
 
 namespace STS\FilamentImpersonate;
 
+use BladeUI\Icons\Factory;
 use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Lab404\Impersonate\Events\LeaveImpersonation;
-use Lab404\Impersonate\Events\TakeImpersonation;
 use Spatie\LaravelPackageTools\Package;
-use Filament\Support\Facades\FilamentView;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BladeUI\Icons\Factory;
+use STS\FilamentImpersonate\Facades\Impersonation;
+use STS\FilamentImpersonate\Events\EnterImpersonation;
+use STS\FilamentImpersonate\Events\LeaveImpersonation;
+use STS\FilamentImpersonate\Guard\SessionGuard;
+use STS\FilamentImpersonate\ImpersonateManager;
 
 class FilamentImpersonateServiceProvider extends PackageServiceProvider
 {
@@ -28,49 +34,71 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
     public function registeringPackage(): void
     {
-        Event::listen(TakeImpersonation::class, fn () => $this->clearAuthHashes());
+        $this->app->scoped(ImpersonateManager::class);
+        $this->app->alias(ImpersonateManager::class, 'impersonate');
+
+        Event::listen(EnterImpersonation::class, fn () => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
+        Event::listen(Login::class, fn () => Impersonation::clear());
+        Event::listen(Logout::class, fn () => Impersonation::clear());
 
         $this->registerIcon();
     }
 
     public function bootingPackage(): void
     {
+        $this->registerSessionGuard();
+
         FilamentView::registerRenderHook(
             config('filament-impersonate.banner.render_hook', 'panels::body.start'),
-            static fn (): string => Blade::render("<x-filament-impersonate::banner/>")
+            static fn (): string => Blade::render('<x-filament-impersonate::banner/>')
         );
 
-        // For backwards compatibility we're going to load our views into the namespace we used to use as well.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
+    }
+
+    protected function registerSessionGuard(): void
+    {
+        Auth::extend('session', function ($app, string $name, array $config) {
+            $guard = new SessionGuard(
+                $name,
+                Auth::createUserProvider($config['provider'] ?? null),
+                $app['session.store'],
+            );
+
+            $guard->setCookieJar($app['cookie']);
+            $guard->setDispatcher($app['events']);
+            $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
+
+            if (isset($config['remember'])) {
+                $guard->setRememberDuration($config['remember']);
+            }
+
+            return $guard;
+        });
     }
 
     protected function clearAuthHashes(): void
     {
-        $hashes = [
-            'password_hash_sanctum',
-            'password_hash_' . auth()->getDefaultDriver(),
-        ];
-
-        if ($guard = session('impersonate.guard')) {
-            $hashes[] = 'password_hash_' . $guard;
-        }
+        $guards = collect([
+            'sanctum',
+            auth()->getDefaultDriver(),
+            session('impersonate.guard'),
+        ]);
 
         try {
-            if ($panel = Filament::getCurrentOrDefaultPanel()) {
-                $hashes[] = 'password_hash_' . $panel->getAuthGuard();
-            }
+            $guards->push(Filament::getCurrentOrDefaultPanel()?->getAuthGuard());
 
-            if ($backToPanelId = session()->get('impersonate.back_to_panel')) {
-                if ($panel = Filament::getPanel($backToPanelId)) {
-                    $hashes[] = 'password_hash_' . $panel->getAuthGuard();
-                }
+            if ($panelId = session('impersonate.back_to_panel')) {
+                $guards->push(Filament::getPanel($panelId)?->getAuthGuard());
             }
-        } catch (\Throwable $e) {
-            // Log or handle the error if needed
+        } catch (\Throwable) {
+            //
         }
 
-        session()->forget(array_unique($hashes));
+        session()->forget(
+            $guards->filter()->unique()->map(fn (string $guard) => "password_hash_{$guard}")->all()
+        );
     }
 
     protected function registerIcon(): void
