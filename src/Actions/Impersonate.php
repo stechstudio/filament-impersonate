@@ -27,11 +27,10 @@ class Impersonate extends Action
         $this->icon('impersonate-icon');
 
         $this->impersonateRecord(fn ($record) => $record);
-        $this->action(fn () => $this->impersonate($this->evaluate($this->impersonateRecord)));
-
         // Filament's evaluate() only auto-injects closure parameters that match named bindings.
         // We pass 'record' explicitly so that closures like fn($record) => $record->relationship
         // resolve correctly in table row contexts where the record isn't otherwise bound.
+        $this->action(fn ($record) => $this->impersonate($this->evaluate($this->impersonateRecord, ['record' => $record])));
         $this->visible(fn ($record) => $this->canImpersonate($this->evaluate($this->impersonateRecord, ['record' => $record])));
     }
 
