@@ -5,7 +5,6 @@
     "minimum-stability": "dev",
     "license": "MIT",
     "require": {
-        "lab404/laravel-impersonate": "^1.7",
         "filament/filament": "^4.0|^5.0"
     },
     "require-dev": {

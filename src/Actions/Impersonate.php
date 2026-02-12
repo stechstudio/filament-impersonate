@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
-use Lab404\Impersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Services\ImpersonateManager;
 
 class Impersonate extends Action
 {

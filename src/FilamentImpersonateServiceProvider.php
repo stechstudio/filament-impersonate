@@ -3,10 +3,15 @@
 namespace STS\FilamentImpersonate;
 
 use Filament\Facades\Filament;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Lab404\Impersonate\Events\LeaveImpersonation;
-use Lab404\Impersonate\Events\TakeImpersonation;
+use STS\FilamentImpersonate\Events\LeaveImpersonation;
+use STS\FilamentImpersonate\Events\TakeImpersonation;
+use STS\FilamentImpersonate\Guard\SessionGuard;
+use STS\FilamentImpersonate\Services\ImpersonateManager;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Support\Facades\FilamentView;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -28,14 +33,44 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
     public function registeringPackage(): void
     {
+        $this->app->scoped(ImpersonateManager::class);
+        $this->app->alias(ImpersonateManager::class, 'impersonate');
+
         Event::listen(TakeImpersonation::class, fn () => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
+
+        // Clear stale impersonation state on real login/logout events
+        Event::listen(Login::class, fn () => app(ImpersonateManager::class)->clear());
+        Event::listen(Logout::class, fn () => app(ImpersonateManager::class)->clear());
 
         $this->registerIcon();
     }
 
     public function bootingPackage(): void
     {
+        Auth::extend('session', function ($app, $name, array $config) {
+            $provider = Auth::createUserProvider($config['provider'] ?? null);
+            $guard = new SessionGuard($name, $provider, $app['session.store']);
+
+            if (method_exists($guard, 'setCookieJar')) {
+                $guard->setCookieJar($app['cookie']);
+            }
+
+            if (method_exists($guard, 'setDispatcher')) {
+                $guard->setDispatcher($app['events']);
+            }
+
+            if (method_exists($guard, 'setRequest')) {
+                $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
+            }
+
+            if (isset($config['remember'])) {
+                $guard->setRememberDuration($config['remember']);
+            }
+
+            return $guard;
+        });
+
         FilamentView::registerRenderHook(
             config('filament-impersonate.banner.render_hook', 'panels::body.start'),
             static fn (): string => Blade::render("<x-filament-impersonate::banner/>")

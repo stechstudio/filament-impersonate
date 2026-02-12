@@ -4,7 +4,7 @@ namespace STS\FilamentImpersonate\Tests;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Lab404\Impersonate\Models\Impersonate;
+use STS\FilamentImpersonate\Models\Impersonate;
 
 class User extends Authenticatable
 {

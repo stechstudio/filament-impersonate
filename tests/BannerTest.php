@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Blade;
-use Lab404\Impersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Actions\Impersonate;
 use STS\FilamentImpersonate\Tests\User;
 

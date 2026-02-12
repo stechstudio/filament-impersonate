@@ -6,10 +6,6 @@
 
 This is a plugin for [Filament](https://filamentadmin.com/) that makes it easy to impersonate your users. 
 
-### Credit
-
-This package uses [https://github.com/404labfr/laravel-impersonate](https://github.com/404labfr/laravel-impersonate) under the hood, and borrows heavily from [https://github.com/KABBOUCHI/nova-impersonate](https://github.com/KABBOUCHI/nova-impersonate).
-
 ## Installation
 
 You know the drill:
