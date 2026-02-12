@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
 use STS\FilamentImpersonate\Guard\SessionGuard;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\ImpersonateManager;
 
 class FilamentImpersonateServiceProvider extends PackageServiceProvider
 {
@@ -38,8 +39,8 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
         Event::listen(EnterImpersonation::class, fn () => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
-        Event::listen(Login::class, fn () => app(ImpersonateManager::class)->clear());
-        Event::listen(Logout::class, fn () => app(ImpersonateManager::class)->clear());
+        Event::listen(Login::class, fn () => Impersonation::clear());
+        Event::listen(Logout::class, fn () => Impersonation::clear());
 
         $this->registerIcon();
     }

@@ -3,7 +3,7 @@
 namespace STS\FilamentImpersonate\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\ImpersonateManager;
 
 /**
  * @method static bool isImpersonating()
@@ -15,7 +15,7 @@ use STS\FilamentImpersonate\Services\ImpersonateManager;
  * @method static string|null getImpersonatorGuardName()
  * @method static string|null getImpersonatorGuardUsingName()
  *
- * @see \STS\FilamentImpersonate\Services\ImpersonateManager
+ * @see \STS\FilamentImpersonate\ImpersonateManager
  */
 class Impersonation extends Facade
 {

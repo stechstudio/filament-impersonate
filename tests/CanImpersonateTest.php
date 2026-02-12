@@ -1,7 +1,7 @@
 <?php
 
-use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
@@ -25,9 +25,8 @@ beforeEach(function () {
 afterEach(function () {
     User::resetAuthorizationDefaults();
 
-    // Leave impersonation if active
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 
@@ -70,7 +69,7 @@ describe('canImpersonate authorization', function () {
 
     it('returns false when already impersonating', function () {
         // Start impersonation
-        app(ImpersonateManager::class)->enter($this->admin, $this->targetUser, 'web');
+        Impersonation::enter($this->admin, $this->targetUser, 'web');
 
         $thirdUser = User::create([
             'name' => 'Third User',

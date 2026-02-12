@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Blade;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
@@ -26,8 +26,8 @@ beforeEach(function () {
 afterEach(function () {
     User::resetAuthorizationDefaults();
 
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 
@@ -163,13 +163,13 @@ describe('banner multi-guard support', function () {
 
         // Simulate being in a different panel with a different guard
         // The impersonator guard is 'web', but we'll check with a different guard
-        $impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+        $impersonatorGuard = Impersonation::getImpersonatorGuardUsingName();
         expect($impersonatorGuard)->toBe('web');
 
         // Mock the scenario where we're in a different panel
         // by directly testing the condition logic
         $currentPanelGuard = 'admin'; // Different from 'web'
-        $shouldShow = app('impersonate')->isImpersonating()
+        $shouldShow = Impersonation::isImpersonating()
             && $currentPanelGuard
             && $impersonatorGuard === $currentPanelGuard;
 
@@ -181,10 +181,10 @@ describe('banner multi-guard support', function () {
         $action = Impersonate::make()->backTo('/admin');
         $action->impersonate($this->targetUser);
 
-        $impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+        $impersonatorGuard = Impersonation::getImpersonatorGuardUsingName();
         $currentPanelGuard = 'web'; // Same as impersonator guard
 
-        $shouldShow = app('impersonate')->isImpersonating()
+        $shouldShow = Impersonation::isImpersonating()
             && $currentPanelGuard
             && $impersonatorGuard === $currentPanelGuard;
 

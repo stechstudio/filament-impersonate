@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Http\RedirectResponse;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
 use Livewire\Features\SupportRedirects\Redirector;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
@@ -27,9 +27,8 @@ beforeEach(function () {
 afterEach(function () {
     User::resetAuthorizationDefaults();
 
-    // Leave impersonation if active
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 
@@ -95,7 +94,7 @@ describe('impersonate method', function () {
         $action = Impersonate::make();
         $action->impersonate($this->targetUser);
 
-        expect(app(ImpersonateManager::class)->isImpersonating())->toBeTrue();
+        expect(Impersonation::isImpersonating())->toBeTrue();
     });
 
     it('impersonates the correct user', function () {

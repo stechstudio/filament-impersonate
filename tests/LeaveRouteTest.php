@@ -1,7 +1,7 @@
 <?php
 
-use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
@@ -26,8 +26,8 @@ afterEach(function () {
     User::resetAuthorizationDefaults();
 
     // Leave impersonation if active
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 
@@ -47,12 +47,12 @@ describe('leave route', function () {
         $action = Impersonate::make()->backTo('/admin/users');
         $action->impersonate($this->targetUser);
 
-        expect(app(ImpersonateManager::class)->isImpersonating())->toBeTrue();
+        expect(Impersonation::isImpersonating())->toBeTrue();
 
         // Leave impersonation
         $response = $this->get(route('filament-impersonate.leave'));
 
-        expect(app(ImpersonateManager::class)->isImpersonating())->toBeFalse();
+        expect(Impersonation::isImpersonating())->toBeFalse();
     });
 
     it('redirects to session back_to value', function () {
@@ -105,7 +105,7 @@ describe('leave route', function () {
 
     it('redirects to fallback when session back_to is missing', function () {
         // Start impersonation without backTo set
-        app(ImpersonateManager::class)->enter(
+        Impersonation::enter(
             $this->admin,
             $this->targetUser,
             'web'
@@ -114,13 +114,13 @@ describe('leave route', function () {
         // Manually clear the back_to session to simulate corruption/loss
         session()->forget('impersonate.back_to');
 
-        expect(app(ImpersonateManager::class)->isImpersonating())->toBeTrue();
+        expect(Impersonation::isImpersonating())->toBeTrue();
         expect(session('impersonate.back_to'))->toBeNull();
 
         // Leave impersonation - should fallback to '/' instead of error
         $response = $this->get(route('filament-impersonate.leave'));
 
         $response->assertRedirect('/');
-        expect(app(ImpersonateManager::class)->isImpersonating())->toBeFalse();
+        expect(Impersonation::isImpersonating())->toBeFalse();
     });
 });

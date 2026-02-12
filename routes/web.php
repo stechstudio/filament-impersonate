@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 Route::get('filament-impersonate/leave', function () {
-    if (! app(ImpersonateManager::class)->isImpersonating()) {
+    if (! Impersonation::isImpersonating()) {
         return redirect('/');
     }
 
-    app(ImpersonateManager::class)->leave();
+    Impersonation::leave();
 
     return redirect(
         session()->pull('impersonate.back_to') ?? '/'

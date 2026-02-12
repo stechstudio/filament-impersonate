@@ -1,7 +1,6 @@
 <?php
 
 use STS\FilamentImpersonate\Facades\Impersonation;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
 use STS\FilamentImpersonate\Tests\User;
 
 beforeEach(function () {
@@ -21,8 +20,8 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    if (app(ImpersonateManager::class)->isImpersonating()) {
-        app(ImpersonateManager::class)->leave();
+    if (Impersonation::isImpersonating()) {
+        Impersonation::leave();
     }
 });
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace STS\FilamentImpersonate\Services;
+namespace STS\FilamentImpersonate;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use STS\FilamentImpersonate\Events\EnterImpersonation;
@@ -106,9 +106,6 @@ class ImpersonateManager
         ]);
     }
 
-    /**
-     * Resolve the auth guard and ensure it's our custom SessionGuard.
-     */
     protected function guard(?string $guardName): SessionGuard
     {
         $guard = auth()->guard($guardName);
@@ -122,10 +119,6 @@ class ImpersonateManager
         return $guard;
     }
 
-    /**
-     * Look up a user by ID using the auth provider configured for the given guard.
-     * This handles multi-guard/multi-provider setups where different guards use different User models/tables.
-     */
     protected function findUserByGuard(int|string $id, ?string $guardName): ?Authenticatable
     {
         if (empty($guardName)) {
@@ -141,9 +134,6 @@ class ImpersonateManager
         return auth()->createUserProvider($providerName)?->retrieveById($id);
     }
 
-    /**
-     * Determine which auth guard is currently authenticated.
-     */
     protected function getCurrentAuthGuardName(): ?string
     {
         foreach (array_keys(config('auth.guards')) as $guard) {
@@ -155,9 +145,6 @@ class ImpersonateManager
         return null;
     }
 
-    /**
-     * Save any remember-me cookies in the session before switching users.
-     */
     protected function saveAuthCookieInSession(): void
     {
         $cookies = collect(request()->cookies->all())
@@ -173,9 +160,6 @@ class ImpersonateManager
         session()->put(static::REMEMBER_PREFIX, [$key, $val]);
     }
 
-    /**
-     * Restore remember-me cookies from the session after leaving impersonation.
-     */
     protected function extractAuthCookieFromSession(): void
     {
         $saved = session(static::REMEMBER_PREFIX);

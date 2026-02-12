@@ -1,9 +1,11 @@
 @props(['style', 'display', 'fixed', 'position'])
 
 @php
-$impersonatorGuard = app('impersonate')->getImpersonatorGuardUsingName();
+use STS\FilamentImpersonate\Facades\Impersonation;
+
+$impersonatorGuard = Impersonation::getImpersonatorGuardUsingName();
 $currentPanelGuard = Filament\Facades\Filament::getAuthGuard();
-$shouldShowBanner = app('impersonate')->isImpersonating()
+$shouldShowBanner = Impersonation::isImpersonating()
     && $currentPanelGuard
     && $impersonatorGuard === $currentPanelGuard;
 @endphp

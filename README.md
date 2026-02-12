@@ -174,9 +174,11 @@ The banner will show the name of the impersonated user, assuming there is a `nam
 ```php
 <?php
 
+use STS\FilamentImpersonate\Facades\Impersonation;
+
 public function viewAny(User $user): bool
 {
-    if (app('impersonate')->isImpersonating()) {
+    if (Impersonation::isImpersonating()) {
         return true;
     }
 

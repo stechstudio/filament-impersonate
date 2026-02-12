@@ -7,7 +7,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
-use STS\FilamentImpersonate\Services\ImpersonateManager;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 class Impersonate extends Action
 {
@@ -94,7 +94,7 @@ class Impersonate extends Action
             'impersonate.guard' => $this->getGuard(),
         ]);
 
-        if (! app(ImpersonateManager::class)->enter(Filament::auth()->user(), $record, $this->getGuard())) {
+        if (! Impersonation::enter(Filament::auth()->user(), $record, $this->getGuard())) {
             return false;
         }
 
@@ -117,7 +117,7 @@ class Impersonate extends Action
             return false;
         }
 
-        if (app(ImpersonateManager::class)->isImpersonating()) {
+        if (Impersonation::isImpersonating()) {
             return false;
         }
 
