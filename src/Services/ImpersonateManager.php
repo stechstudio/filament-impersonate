@@ -3,9 +3,8 @@
 namespace STS\FilamentImpersonate\Services;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\UserProvider;
-use STS\FilamentImpersonate\Events\LeaveImpersonation;
 use STS\FilamentImpersonate\Events\EnterImpersonation;
+use STS\FilamentImpersonate\Events\LeaveImpersonation;
 use STS\FilamentImpersonate\Guard\SessionGuard;
 
 class ImpersonateManager
@@ -59,7 +58,7 @@ class ImpersonateManager
 
             $this->guard($currentGuard)->quietLogout();
             $this->guard($guardName)->quietLogin($to);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $this->clear();
 
             return false;
@@ -78,7 +77,6 @@ class ImpersonateManager
 
             if (! $impersonator) {
                 $this->clear();
-
                 return false;
             }
 
@@ -87,7 +85,7 @@ class ImpersonateManager
 
             $this->extractAuthCookieFromSession();
             $this->clear();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $this->clear();
 
             return false;
@@ -104,6 +102,7 @@ class ImpersonateManager
             static::SESSION_KEY,
             static::SESSION_GUARD,
             static::SESSION_GUARD_USING,
+            static::REMEMBER_PREFIX,
         ]);
     }
 
@@ -139,10 +138,7 @@ class ImpersonateManager
             return null;
         }
 
-        /** @var UserProvider $provider */
-        $provider = auth()->createUserProvider($providerName);
-
-        return $provider?->retrieveById($id);
+        return auth()->createUserProvider($providerName)?->retrieveById($id);
     }
 
     /**
@@ -189,6 +185,5 @@ class ImpersonateManager
         }
 
         cookie()->queue($saved[0], $saved[1]);
-        session()->forget(static::REMEMBER_PREFIX);
     }
 }

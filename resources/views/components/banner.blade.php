@@ -24,7 +24,6 @@ $borderPosition = $position === 'top' ? 'bottom' : 'top';
 $style = $style ?? config('filament-impersonate.banner.style');
 $styles = config('filament-impersonate.banner.styles');
 $default = $style === 'auto' ? 'light' : $style;
-$flipped = $default === 'dark' ? 'light' : 'dark';
 @endphp
 
 <style>
@@ -46,7 +45,6 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
     html {
         margin-{{ $position }}: var(--impersonate-banner-height);
     }
-
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
@@ -137,4 +135,4 @@ $flipped = $default === 'dark' ? 'light' : 'dark';
 
     <a href="{{ route('filament-impersonate.leave') }}">{{ __('filament-impersonate::banner.leave') }}</a>
 </div>
-@endIf
+@endif

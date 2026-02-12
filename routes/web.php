@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use STS\FilamentImpersonate\Services\ImpersonateManager;
 
 Route::get('filament-impersonate/leave', function () {
-    if (!app(ImpersonateManager::class)->isImpersonating()) {
+    if (! app(ImpersonateManager::class)->isImpersonating()) {
         return redirect('/');
     }
 

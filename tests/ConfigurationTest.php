@@ -7,13 +7,6 @@ beforeEach(function () {
 });
 
 describe('configuration defaults', function () {
-    it('has default guard of web', function () {
-        // Reset to package default
-        config(['filament-impersonate.guard' => 'web']);
-
-        expect(config('filament-impersonate.guard'))->toBe('web');
-    });
-
     it('has default redirect_to of /', function () {
         // Note: TestCase sets this to /default-redirect for testing
         // Check the actual package default
@@ -62,12 +55,6 @@ describe('configuration defaults', function () {
 });
 
 describe('configuration overrides', function () {
-    it('respects guard override', function () {
-        config(['filament-impersonate.guard' => 'admin']);
-
-        expect(config('filament-impersonate.guard'))->toBe('admin');
-    });
-
     it('respects redirect_to override', function () {
         config(['filament-impersonate.redirect_to' => '/custom-redirect']);
 
