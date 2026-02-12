@@ -101,6 +101,18 @@ When you click on the impersonate icon you will be logged in as that user, and r
 
 All configuration can be managed with ENV variables, no need to publish and edit the config directly. Just check out the [config file](/config/filament-impersonate.php).
 
+## Facade API
+
+You can use the facade for programmatic impersonation control:
+
+```php
+use STS\FilamentImpersonate\Facades\Impersonation;
+
+if (Impersonation::isImpersonating()) {
+    Impersonation::leave();
+}
+```
+
 ## Authorization
 
 By default, only Filament admins can impersonate other users. You can control this by adding a `canImpersonate` method to your `FilamentUser` class:
