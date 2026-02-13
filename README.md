@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/stechstudio/filament-impersonate.svg?style=flat-square)](https://packagist.org/packages/stechstudio/filament-impersonate)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-This is a plugin for [Filament](https://filamentadmin.com/) that makes it easy to impersonate your users. 
+This is a plugin for [Filament](https://filamentphp.com/) that makes it easy to impersonate your users. 
 
 ## Installation
 
@@ -44,7 +44,7 @@ class UserResource extends Resource {
 You can also define a `guard` and `redirectTo` for the action:
 
 ```php
-Impersonate::make('impersonate')
+Impersonate::make()
     ->guard('another-guard')
     ->redirectTo(route('some.other.route'));
 ```
@@ -53,7 +53,7 @@ Impersonate::make('impersonate')
 
 Now open the page where you would want the button to appear, this will commonly be `EditUser`;
 
-Go to the `getActions` method and add the `Impersonate` page action here.
+Go to the `getHeaderActions` method and add the `Impersonate` page action here.
 
 ```php
 <?php
@@ -67,10 +67,10 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
-            Impersonate::make()->record($this->getRecord()) // <--
+            Impersonate::make()->record($this->getRecord()), // <--
         ];
     }
 }
@@ -90,11 +90,11 @@ You can do that by adding `<x-impersonate::banner/>` to your master layout(s) be
 
 That's it. You should now see an action icon next to each user in your Filament `UserResource` list:
 
-<img width="1164" alt="CleanShot 2022-01-03 at 14 10 36@2x" src="https://user-images.githubusercontent.com/203749/147969981-01d18612-bc71-4503-89f6-a8e625ba2a5d.png">
+![table action](art/table-action.png)
 
 When you click on the impersonate icon you will be logged in as that user, and redirected to your main app. You will see the impersonation banner at the top of the page, with a button to leave and return to Filament:
 
-![banner](https://user-images.githubusercontent.com/203749/112773267-5331b400-9003-11eb-85ae-b54c458fb5aa.png)
+![banner](art/banner.png)
 
 
 ## Configuration
@@ -115,16 +115,16 @@ if (Impersonation::isImpersonating()) {
 
 ## Authorization
 
-By default, only Filament admins can impersonate other users. You can control this by adding a `canImpersonate` method to your `FilamentUser` class:
+By default, any authenticated Filament user can impersonate other users. You can restrict this by adding a `canImpersonate` method to your User model:
 
 ```php
-class User implements FilamentUser {
-    
+class User {
+
     public function canImpersonate()
     {
-        return true;
+        return $this->is_admin;
     }
-    
+
 }
 ```
 
@@ -136,7 +136,7 @@ class User {
     public function canBeImpersonated()
     {
         // Let's prevent impersonating other users at our own company
-        return !Str::endsWith($this->email, '@mycorp.com');
+        return !str_ends_with($this->email, '@mycorp.com');
     }
     
 }

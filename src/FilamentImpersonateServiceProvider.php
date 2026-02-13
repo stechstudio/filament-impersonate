@@ -63,10 +63,6 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
         try {
             $guards->push(Filament::getCurrentOrDefaultPanel()?->getAuthGuard());
-
-            if ($panelId = session('impersonate.back_to_panel')) {
-                $guards->push(Filament::getPanel($panelId)?->getAuthGuard());
-            }
         } catch (\Throwable) {
             //
         }

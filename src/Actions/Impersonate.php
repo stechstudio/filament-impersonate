@@ -89,12 +89,14 @@ class Impersonate extends Action
             return false;
         }
 
+        $guard = $this->getGuard();
+
         session()->put([
             'impersonate.back_to' => $this->resolveBackToUrl(),
-            'impersonate.guard' => $this->getGuard(),
+            'impersonate.guard' => $guard,
         ]);
 
-        if (! Impersonation::enter(Filament::auth()->user(), $record, $this->getGuard())) {
+        if (! Impersonation::enter(Filament::auth()->user(), $record, $guard)) {
             Notification::make()
                 ->title(__('filament-impersonate::action.failed'))
                 ->danger()
@@ -118,7 +120,7 @@ class Impersonate extends Action
     {
         $current = Filament::auth()->user();
 
-        if (blank($target) || $current->is($target)) {
+        if (is_null($current) || blank($target) || $current->is($target)) {
             return false;
         }
 
