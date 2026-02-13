@@ -5,6 +5,7 @@ namespace STS\FilamentImpersonate\Actions;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use STS\FilamentImpersonate\Facades\Impersonation;
@@ -94,6 +95,11 @@ class Impersonate extends Action
         ]);
 
         if (! Impersonation::enter(Filament::auth()->user(), $record, $this->getGuard())) {
+            Notification::make()
+                ->title(__('filament-impersonate::action.failed'))
+                ->danger()
+                ->send();
+
             return false;
         }
 

@@ -3,7 +3,6 @@
 use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
 use STS\FilamentImpersonate\Facades\Impersonation;
-use STS\FilamentImpersonate\Guard\SessionGuard;
 use STS\FilamentImpersonate\ImpersonateManager;
 use STS\FilamentImpersonate\Tests\User;
 use Illuminate\Support\Facades\Event;
@@ -207,17 +206,17 @@ describe('error handling', function () {
     });
 });
 
-describe('SessionGuard integration', function () {
-    it('uses our custom SessionGuard', function () {
-        expect(auth()->guard('web'))->toBeInstanceOf(SessionGuard::class);
+describe('guard compatibility', function () {
+    it('works with stock Laravel SessionGuard', function () {
+        expect(auth()->guard('web'))->toBeInstanceOf(\Illuminate\Auth\SessionGuard::class);
     });
 
-    it('SessionGuard has quietLogin method', function () {
-        expect(method_exists(auth()->guard('web'), 'quietLogin'))->toBeTrue();
-    });
+    it('rejects non-session guards', function () {
+        config(['auth.guards.token_guard' => ['driver' => 'token', 'provider' => 'users']]);
 
-    it('SessionGuard has quietLogout method', function () {
-        expect(method_exists(auth()->guard('web'), 'quietLogout'))->toBeTrue();
+        $result = Impersonation::enter($this->admin, $this->targetUser, 'token_guard');
+
+        expect($result)->toBeFalse();
     });
 });
 

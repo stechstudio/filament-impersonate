@@ -7,7 +7,6 @@ use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
@@ -15,7 +14,6 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use STS\FilamentImpersonate\Facades\Impersonation;
 use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
-use STS\FilamentImpersonate\Guard\SessionGuard;
 use STS\FilamentImpersonate\ImpersonateManager;
 
 class FilamentImpersonateServiceProvider extends PackageServiceProvider
@@ -47,35 +45,12 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
     public function bootingPackage(): void
     {
-        $this->registerSessionGuard();
-
         FilamentView::registerRenderHook(
             config('filament-impersonate.banner.render_hook', 'panels::body.start'),
             static fn (): string => Blade::render('<x-filament-impersonate::banner/>')
         );
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
-    }
-
-    protected function registerSessionGuard(): void
-    {
-        Auth::extend('session', function ($app, string $name, array $config) {
-            $guard = new SessionGuard(
-                $name,
-                Auth::createUserProvider($config['provider'] ?? null),
-                $app['session.store'],
-            );
-
-            $guard->setCookieJar($app['cookie']);
-            $guard->setDispatcher($app['events']);
-            $guard->setRequest($app->refresh('request', $guard, 'setRequest'));
-
-            if (isset($config['remember'])) {
-                $guard->setRememberDuration($config['remember']);
-            }
-
-            return $guard;
-        });
     }
 
     protected function clearAuthHashes(): void

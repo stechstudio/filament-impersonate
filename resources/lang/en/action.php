@@ -2,4 +2,5 @@
 
 return [
     'label' => 'Impersonate',
+    'failed' => 'Impersonation failed',
 ];

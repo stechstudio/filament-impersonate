@@ -2,10 +2,11 @@
 
 namespace STS\FilamentImpersonate;
 
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Log;
 use STS\FilamentImpersonate\Events\EnterImpersonation;
 use STS\FilamentImpersonate\Events\LeaveImpersonation;
-use STS\FilamentImpersonate\Guard\SessionGuard;
 
 class ImpersonateManager
 {
@@ -52,13 +53,30 @@ class ImpersonateManager
         try {
             $currentGuard = $this->getCurrentAuthGuardName();
 
+            // Resolve both guards and capture session keys before manipulating state
+            $fromGuard = $this->resolveSessionGuard($currentGuard);
+            $toGuard = $this->resolveSessionGuard($guardName);
+
             session()->put(static::SESSION_KEY, $from->getAuthIdentifier());
             session()->put(static::SESSION_GUARD, $currentGuard);
             session()->put(static::SESSION_GUARD_USING, $guardName);
 
-            $this->guard($currentGuard)->quietLogout();
-            $this->guard($guardName)->quietLogin($to);
-        } catch (\Throwable) {
+            // Clear current user from session (no events fired)
+            session()->forget($fromGuard->getName());
+            session()->forget($fromGuard->getRecallerName());
+
+            // Set target user in session (no events fired, no session ID migration)
+            session()->put($toGuard->getName(), $to->getAuthIdentifier());
+
+            // Force auth to re-read from session
+            auth()->forgetGuards();
+        } catch (\Throwable $e) {
+            Log::warning('Impersonation enter() failed: '.$e->getMessage(), [
+                'guard' => $guardName,
+                'from' => $from->getAuthIdentifier(),
+                'to' => $to->getAuthIdentifier(),
+            ]);
+
             $this->clear();
 
             return false;
@@ -80,12 +98,25 @@ class ImpersonateManager
                 return false;
             }
 
-            $this->guard($this->getCurrentAuthGuardName())->quietLogout();
-            $this->guard($this->getImpersonatorGuardName())->quietLogin($impersonator);
+            // Resolve both guards and capture session keys before manipulating state
+            $currentGuard = $this->resolveSessionGuard($this->getCurrentAuthGuardName());
+            $impersonatorGuard = $this->resolveSessionGuard($this->getImpersonatorGuardName());
+
+            // Clear impersonated user from session
+            session()->forget($currentGuard->getName());
+            session()->forget($currentGuard->getRecallerName());
+
+            // Restore impersonator in session
+            session()->put($impersonatorGuard->getName(), $impersonator->getAuthIdentifier());
+
+            // Force auth to re-read from session
+            auth()->forgetGuards();
 
             $this->extractAuthCookieFromSession();
             $this->clear();
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            Log::warning('Impersonation leave() failed: '.$e->getMessage());
+
             $this->clear();
 
             return false;
@@ -106,7 +137,7 @@ class ImpersonateManager
         ]);
     }
 
-    protected function guard(?string $guardName): SessionGuard
+    protected function resolveSessionGuard(?string $guardName): SessionGuard
     {
         $guard = auth()->guard($guardName);
 
