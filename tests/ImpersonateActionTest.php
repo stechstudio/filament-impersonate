@@ -105,21 +105,21 @@ describe('redirectSpa', function () {
 
     it('returns true when redirectSpa set to true', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', redirectSpa: true);
+            ->redirectTo('/custom-path', spa: true);
 
         expect($action->getRedirectSpa())->toBeTrue();
     });
 
     it('returns false when redirectSpa set to false', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', redirectSpa: false);
+            ->redirectTo('/custom-path', spa: false);
 
         expect($action->getRedirectSpa())->toBeFalse();
     });
 
     it('evaluates closure for redirectSpa', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', redirectSpa: fn () => false);
+            ->redirectTo('/custom-path', spa: fn () => false);
 
         expect($action->getRedirectSpa())->toBeFalse();
     });

@@ -49,10 +49,10 @@ class Impersonate extends Action
         return $this;
     }
 
-    public function redirectTo(Closure|string $redirectTo, Closure|bool|null $redirectSpa = null): static
+    public function redirectTo(Closure|string $redirectTo, Closure|bool|null $spa = null): static
     {
         $this->redirectTo = $redirectTo;
-        $this->redirectSpa = $redirectSpa;
+        $this->redirectSpa = $spa;
 
         return $this;
     }
