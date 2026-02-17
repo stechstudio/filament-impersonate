@@ -95,6 +95,36 @@ describe('guard', function () {
     });
 });
 
+describe('redirectSpa', function () {
+    it('returns null when redirectSpa not set', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path');
+
+        expect($action->getRedirectSpa())->toBeNull();
+    });
+
+    it('returns true when redirectSpa set to true', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path', spa: true);
+
+        expect($action->getRedirectSpa())->toBeTrue();
+    });
+
+    it('returns false when redirectSpa set to false', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path', spa: false);
+
+        expect($action->getRedirectSpa())->toBeFalse();
+    });
+
+    it('evaluates closure for redirectSpa', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path', spa: fn () => false);
+
+        expect($action->getRedirectSpa())->toBeFalse();
+    });
+});
+
 describe('backTo', function () {
     it('returns custom backTo URL when set', function () {
         $action = Impersonate::make()
