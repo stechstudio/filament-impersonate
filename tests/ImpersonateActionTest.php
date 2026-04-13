@@ -95,31 +95,50 @@ describe('guard', function () {
     });
 });
 
-describe('redirectSpa', function () {
-    it('returns null when redirectSpa not set', function () {
+describe('spa', function () {
+    it('returns null when spa not set', function () {
         $action = Impersonate::make()
             ->redirectTo('/custom-path');
 
         expect($action->getRedirectSpa())->toBeNull();
     });
 
-    it('returns true when redirectSpa set to true', function () {
+    it('returns true when spa() called with no argument', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', spa: true);
+            ->redirectTo('/custom-path')
+            ->spa();
 
         expect($action->getRedirectSpa())->toBeTrue();
     });
 
-    it('returns false when redirectSpa set to false', function () {
+    it('returns true when withSpa() called', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', spa: false);
+            ->redirectTo('/custom-path')
+            ->withSpa();
+
+        expect($action->getRedirectSpa())->toBeTrue();
+    });
+
+    it('returns false when withoutSpa() called', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path')
+            ->withoutSpa();
 
         expect($action->getRedirectSpa())->toBeFalse();
     });
 
-    it('evaluates closure for redirectSpa', function () {
+    it('returns false when spa(false) called', function () {
         $action = Impersonate::make()
-            ->redirectTo('/custom-path', spa: fn () => false);
+            ->redirectTo('/custom-path')
+            ->spa(false);
+
+        expect($action->getRedirectSpa())->toBeFalse();
+    });
+
+    it('evaluates closure for spa', function () {
+        $action = Impersonate::make()
+            ->redirectTo('/custom-path')
+            ->spa(fn () => false);
 
         expect($action->getRedirectSpa())->toBeFalse();
     });

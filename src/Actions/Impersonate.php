@@ -49,12 +49,28 @@ class Impersonate extends Action
         return $this;
     }
 
-    public function redirectTo(Closure|string $redirectTo, Closure|bool|null $spa = null): static
+    public function redirectTo(Closure|string $redirectTo): static
     {
         $this->redirectTo = $redirectTo;
-        $this->redirectSpa = $spa;
 
         return $this;
+    }
+
+    public function spa(Closure|bool $condition = true): static
+    {
+        $this->redirectSpa = $condition;
+
+        return $this;
+    }
+
+    public function withSpa(): static
+    {
+        return $this->spa(true);
+    }
+
+    public function withoutSpa(): static
+    {
+        return $this->spa(false);
     }
 
     public function backTo(Closure|string $backTo): static
@@ -116,9 +132,11 @@ class Impersonate extends Action
         $redirectTo = $this->getRedirectTo();
 
         if ($this->getLivewire()) {
-            $redirectSpa = $this->getRedirectSpa();
+            $spa = $this->getRedirectSpa();
 
-            $this->redirect($redirectTo, navigate: $redirectSpa);
+            $spa === null
+                ? $this->redirect($redirectTo)
+                : $this->redirect($redirectTo, navigate: $spa);
 
             return true;
         }
