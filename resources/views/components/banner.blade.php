@@ -44,9 +44,27 @@ $default = $style === 'auto' ? 'light' : $style;
         --impersonate-dark-button-bg-color: {{ implode(',', sscanf($styles['light']['background'], "#%02x%02x%02x")) }};
         --impersonate-dark-button-text-color: {{ $styles['light']['text'] }};
     }
-    html {
-        margin-{{ $position }}: var(--impersonate-banner-height);
-    }
+    @if($fixed)
+        body {
+            margin-{{ $position }}: var(--impersonate-banner-height);
+        }
+
+        body.fi-body {
+            min-height: calc(100dvh - var(--impersonate-banner-height));
+        }
+
+        body.fi-body .fi-main-ctn {
+            min-height: calc(100dvh - var(--impersonate-banner-height));
+        }
+
+        body.fi-body-has-topbar .fi-main-ctn {
+            min-height: calc(100dvh - 4rem - var(--impersonate-banner-height));
+        }
+    @else
+        html {
+            margin-{{ $position }}: var(--impersonate-banner-height);
+        }
+    @endif
 
     #impersonate-banner {
         position: {{ $fixed ? 'fixed' : 'absolute' }};
@@ -97,11 +115,11 @@ $default = $style === 'auto' ? 'light' : $style;
     @endif
 
     @if($fixed)
-        div.fi-layout > aside.fi-sidebar {
-            height: calc(100vh - var(--impersonate-banner-height));
-        }
-
         @if($position === 'top')
+            body.fi-body .fi-sidebar {
+                top: calc(4rem + var(--impersonate-banner-height));
+                height: calc(100dvh - 4rem - var(--impersonate-banner-height));
+            }
             .fi-topbar-ctn {
                 top: var(--impersonate-banner-height);
             }
@@ -109,6 +127,9 @@ $default = $style === 'auto' ? 'light' : $style;
                 padding-top: var(--impersonate-banner-height);
             }
         @else
+            body.fi-body .fi-sidebar {
+                height: calc(100dvh - 4rem - var(--impersonate-banner-height));
+            }
             .fi-page-main {
                 padding-bottom: var(--impersonate-banner-height);
             }
@@ -119,9 +140,14 @@ $default = $style === 'auto' ? 'light' : $style;
 
     @endif
 
-    @media print{
-        aside, body {
+    @media print {
+        html, body {
             margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        body.fi-body {
+            min-height: auto;
         }
 
         #impersonate-banner {
