@@ -16,6 +16,8 @@ class Impersonate extends Action
 
     protected Closure|string|null $redirectTo = null;
 
+    protected Closure|bool|null $redirectSpa = null;
+
     protected Closure|string|null $backTo = null;
 
     protected Authenticatable|Closure|null $impersonateRecord = null;
@@ -54,6 +56,23 @@ class Impersonate extends Action
         return $this;
     }
 
+    public function spa(Closure|bool $condition = true): static
+    {
+        $this->redirectSpa = $condition;
+
+        return $this;
+    }
+
+    public function withSpa(): static
+    {
+        return $this->spa(true);
+    }
+
+    public function withoutSpa(): static
+    {
+        return $this->spa(false);
+    }
+
     public function backTo(Closure|string $backTo): static
     {
         $this->backTo = $backTo;
@@ -83,6 +102,11 @@ class Impersonate extends Action
         return $this->evaluate($this->backTo);
     }
 
+    public function getRedirectSpa(): ?bool
+    {
+        return $this->evaluate($this->redirectSpa);
+    }
+
     public function impersonate($record): bool|RedirectResponse
     {
         if (! $this->canImpersonate($record)) {
@@ -108,7 +132,11 @@ class Impersonate extends Action
         $redirectTo = $this->getRedirectTo();
 
         if ($this->getLivewire()) {
-            $this->redirect($redirectTo);
+            $spa = $this->getRedirectSpa();
+
+            $spa === null
+                ? $this->redirect($redirectTo)
+                : $this->redirect($redirectTo, navigate: $spa);
 
             return true;
         }
