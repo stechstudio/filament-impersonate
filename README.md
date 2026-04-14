@@ -48,7 +48,15 @@ Impersonate::make()
     ->guard('another-guard')
     ->redirectTo(route('some.other.route'));
 ```
-    
+
+If your panel uses `->spa()` and the redirect target isn't a Livewire-aware page, opt out of SPA navigation to force a full page load:
+
+```php
+Impersonate::make()
+    ->redirectTo(route('some.other.route'))
+    ->withoutSpa();
+```
+
 ### 2. Add the page action
 
 Now open the page where you would want the button to appear, this will commonly be `EditUser`;
