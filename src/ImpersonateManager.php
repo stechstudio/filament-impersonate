@@ -189,6 +189,8 @@ class ImpersonateManager
         }
 
         session()->put(static::REMEMBER_PREFIX, [$key, $val]);
+
+        cookie()->queue(cookie()->forget($key));
     }
 
     protected function extractAuthCookieFromSession(): void
