@@ -37,8 +37,8 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
 
         Event::listen(EnterImpersonation::class, fn () => $this->clearAuthHashes());
         Event::listen(LeaveImpersonation::class, fn () => $this->clearAuthHashes());
-        Event::listen(Login::class, fn () => Impersonation::clear());
-        Event::listen(Logout::class, fn () => Impersonation::clear());
+        Event::listen(Login::class, fn (Login $event) => $this->clearImpersonationForGuard($event->guard));
+        Event::listen(Logout::class, fn (Logout $event) => $this->clearImpersonationForGuard($event->guard));
 
         $this->registerIcon();
     }
@@ -51,6 +51,35 @@ class FilamentImpersonateServiceProvider extends PackageServiceProvider
         );
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'impersonate');
+    }
+
+    /**
+     * Clear impersonation in response to an auth event, but only when the event
+     * belongs to a guard involved in the active impersonation.
+     *
+     * Apps that share a single session across multiple guards (e.g. an admin
+     * guard alongside a separate customer/storefront guard) would otherwise have
+     * an active impersonation silently torn down when an unrelated guard fires
+     * Login/Logout — a customer logging in on the storefront, say. The
+     * impersonator's own session key is untouched, so they remain authenticated
+     * as the impersonated user but isImpersonating() returns false, leaving them
+     * with no banner and no way to leave. Only the impersonator's guard chain may
+     * end the impersonation.
+     */
+    protected function clearImpersonationForGuard(?string $guard): void
+    {
+        if (Impersonation::isImpersonating()) {
+            $impersonationGuards = array_filter([
+                Impersonation::getImpersonatorGuardName(),
+                Impersonation::getImpersonatorGuardUsingName(),
+            ]);
+
+            if ($guard !== null && $impersonationGuards !== [] && ! in_array($guard, $impersonationGuards, true)) {
+                return;
+            }
+        }
+
+        Impersonation::clear();
     }
 
     protected function clearAuthHashes(): void
