@@ -117,6 +117,10 @@ $default = $style === 'auto' ? 'light' : $style;
     @if($fixed)
         @if($position === 'top')
             body.fi-body .fi-sidebar {
+                top: var(--impersonate-banner-height);
+                height: calc(100dvh - var(--impersonate-banner-height));
+            }
+            body.fi-body-has-topbar .fi-sidebar {
                 top: calc(4rem + var(--impersonate-banner-height));
                 height: calc(100dvh - 4rem - var(--impersonate-banner-height));
             }
@@ -128,6 +132,9 @@ $default = $style === 'auto' ? 'light' : $style;
             }
         @else
             body.fi-body .fi-sidebar {
+                height: calc(100dvh - var(--impersonate-banner-height));
+            }
+            body.fi-body-has-topbar .fi-sidebar {
                 height: calc(100dvh - 4rem - var(--impersonate-banner-height));
             }
             .fi-page-main {
