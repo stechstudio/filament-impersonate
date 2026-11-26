@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'label' => 'Imitieren',
+    'label' => 'Anmelden als',
     'failed' => 'Identitätswechsel fehlgeschlagen',
 ];
